@@ -1,0 +1,37 @@
+{
+	"authors": [
+		"Jagadeesh Karicherla"
+	],
+	"name": "connected-sdk",
+	"description": "The Branch Connected SDK provides an easy way to interact with the Branch API, to track and attribute mobile app downloads and referrals.",
+	"version": "1.0.0",
+	"main": "dist/build.min.js",
+	"homepage": "http://branch.io",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/BranchMetrics/connected-sdk.git"
+	},
+	"ignore": [
+		".gitignore",
+		".jscsrc",
+		".jshintignore",
+		".jshintrc",
+		"CHANGELOG.md",
+		"LICENSE",
+		"Makefile",
+		"README.md",
+		"build.sh",
+		"compiler",
+		"dist/build.min.js.gz",
+		"docs",
+		"externs",
+		"lint.sh",
+		"node_modules",
+		"package.json",
+		"src/**",
+		"testbeds/**",
+		"tests",
+		"transform.js"
+	],
+	"build": "1.0.0"
+}
