@@ -64,7 +64,6 @@
 				<div class="group">
 					<button id="track" class="btn btn-info">.track()</button>
 					<button id="link" class="btn btn-info">.link()</button>
-					<button id="banner" class="btn btn-info">.banner()</button>
 					<button id="disable-tracking" class="btn btn-info">.disableTracking(true)</button>
 					<button id="enable-tracking" class="btn btn-info">.disableTracking(false)</button>
 				</div>
@@ -73,14 +72,6 @@
 				<h4>QR Code</h4>
 				<div class="group">
 					<button id="qrCode" class="btn btn-info">.qrCode()</button>
-				</div>
-			</div>
-			<div class="row col-lg-8 col-lg-offset-2">
-				<h4>SMS</h4>
-				<div class="group">
-					<input class="example-input" type="text" id="SMSNumber" class="form-control" placeholder="1234567890">
-					<button id="sendSMS" class="btn btn-info">.sendSMS(#, linkData, {})</button>
-					<button id="sendSMSNew" class="btn btn-info">.sendSMS(#, linkData, {make_new_link: true})</button>
 				</div>
 			</div>
 			<div class="row col-lg-8 col-lg-offset-2">
@@ -210,57 +201,6 @@
 			branch.qrCode(qrCodeParams, qrCodeSettings, function(err, qrCode) {
 				response.html('<img src="data:image/png;charset=utf-8;base64,' + qrCode.base64() + '" width="500" height="500">');
 			});
-		});
-		$('#sendSMS').click(function() {
-			var smsOptions = {};
-			var phone = getInputVal('#SMSNumber');
-			request.html('branch.sendSMS(' + phone + ', ' + JSON.stringify(sampleParams) + ', ' + smsOptions + ');');
-			branch.sendSMS(phone, sampleParams, smsOptions, function(err, data) {
-				response.html(err || JSON.stringify(data) || 'undefined');
-			});
-		});
-		$('#sendSMSNew').click(function() {
-			var smsOptions = { make_new_link: true };
-			var phone = getInputVal('#SMSNumber');
-			request.html('branch.sendSMS(' + phone + ', ' + JSON.stringify(sampleParams) + ', ' + smsOptions + ');');
-			branch.sendSMS(phone, sampleParams, smsOptions, function(err, data) {
-				response.html(err || JSON.stringify(data) || 'undefined');
-			});
-		});
-		$('#banner').click(function() {
-			request.html(
-				'branch.banner({icon: ' +
-					'"http://icons.iconarchive.com/icons/wineass/ios7-redesign/512/Appstore-icon.png",' +
-					'title: "Branch Demo App",' +
-					'description: "The Branch demo app!",' +
-					'data: {foo: "bar"},' +
-					'reviewCount: 1000,' +
-					'rating: 5,' +
-					'iframe: "true",' +
-					'showMobile: "true",' +
-					'showDesktop: "true",' +
-					'disableHide: "false",' +
-					'forgetHide: "false"' +
-					'});'
-			);
-			branch.banner(
-				{
-					icon: 'http://icons.iconarchive.com/icons/wineass/ios7-redesign/512/Appstore-icon.png',
-					title: 'Demo App',
-					description: 'Branch Demo app!',
-					openAppButtonText: 'Open',
-					downloadAppButtonText: 'Download',
-					reviewCount: 1000, // Review count
-					rating: 5, // Average rating from 0 to 5 in increments of .5
-					iframe: true, // Show banner in an iframe if CSS on your page is conflicting
-					showMobile: true, // true by default, just set here for an example
-					showDesktop: true, // true by default, just set here for an example
-					disableHide: false, // false by default, just set here for an example
-					forgetHide: false // false by default, just set here for an example
-				}, // Banner Options
-				sampleParams // Link data or string of link
-			);
-			response.html('none');
 		});
 		$('#disable-tracking').click(function() {
 			request.text('branch.disableTracking(true);');

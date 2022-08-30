@@ -36,19 +36,10 @@ utils.calculateBrtt = function(startTime) {
 	return (Date.now() - startTime).toString();
 };
 
-utils.dismissEventToSourceMapping = {
-	'didClickJourneyClose': 'Button(X)',
-	'didClickJourneyContinue': 'Dismiss Journey text',
-	'didClickJourneyBackgroundDismiss': 'Background Dismiss',
-	'didScrollJourneyBackgroundDismiss': 'Background Dismiss'
-};
-
 utils.userPreferences = {
 	trackingDisabled: false,
 	whiteListedEndpointsWithData: {
 		'/v1/open': { 'link_identifier':'\\d+' },
-		'/v1/pageview': { 'event': 'pageview' },
-		'/v1/dismiss': { 'event': 'dismiss' },
 		'/v1/url': { }
 	},
 	allowErrorsInCallback: false,
@@ -149,13 +140,6 @@ utils.cleanApplicationAndSessionStorage = function(branch) {
 		branch.identity_id = null;
 		branch.identity = null;
 		branch.browser_fingerprint_id = null;
-
-		if (branch._deepviewCta) {
-			delete branch._deepviewCta;
-		}
-		if (branch._deepviewRequestForReplay) {
-			delete branch._deepviewRequestForReplay;
-		}
 		branch._storage.remove('branch_view_enabled');
 		var data = {};
 		// Sets an empty object for branch_session and branch_session_first in local/sessionStorage
@@ -205,19 +189,8 @@ utils.messages = {
 	timeout: 'Request timed out',
 	blockedByClient: 'Request blocked by client, probably adblock',
 	missingUrl: 'Required argument: URL, is missing',
-	trackingDisabled: 'Requested operation cannot be completed since tracking is disabled',
-	deepviewNotCalled: 'Cannot call Deepview CTA, please call branch.deepview() first'
+	trackingDisabled: 'Requested operation cannot be completed since tracking is disabled'
 };
-
-/**
- * List of valid banner themes
- * The first theme in the list becomes the default theme if one is not specified
- */
-/** @type {Array<string>} */
-utils.bannerThemes = [
-	"light",
-	"dark"
-];
 
 /*
  * Getters for location.search and location.hash, so that we can stub this for testing
@@ -267,46 +240,6 @@ utils.whiteListSessionData = function(data) {
 		'referring_identity': data['referring_identity'] || null,
 		'referring_link': data['referring_link'] || null
 	};
-};
-
-/**
- * @param {Object} sessionData
- * @return {Object} retData
- */
-utils.whiteListJourneysLanguageData = function(sessionData) {
-	var re = /^\$journeys_\S+$/;
-	var data = sessionData['data'];
-	var retData = {};
-
-	if (!data) {
-		return {};
-	}
-
-	switch (typeof data) {
-		case 'string':
-			try {
-				data = safejson.parse(data);
-			}
-			catch (e) {
-				data = {};
-			}
-			break;
-		case 'object':
-			// do nothing:
-			break;
-		default:
-			data = {};
-			break;
-	}
-
-	Object.keys(data).forEach(function(key) {
-		var found = re.test(key);
-		if (found) {
-			retData[key] = data[key];
-		}
-	});
-
-	return retData;
 };
 
 /**
@@ -1037,14 +970,6 @@ utils.validateCommerceEventParams = function(event, commerce_data) {
 	}
 
 	return null;
-};
-
-utils.cleanBannerText = function(string) {
-	if (typeof string !== 'string') {
-		return null;
-	}
-
-	return string.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 };
 
 utils.getTitle = function() {

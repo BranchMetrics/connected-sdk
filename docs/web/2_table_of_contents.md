@@ -13,20 +13,6 @@
 
 3. Deep Linking
   + [.link()](#linkdata-callback)
-  + [.sendSMS()](#sendsmsphone-linkdata-options-callback)
-  + [.deepview()](#deepviewdata-options-callback)
-  + [.deepviewCta()](#deepviewcta)
-
-4. Event Listener
-  + [.addListener()](#addlistenerevent-listener)
-  + [.removeListener()](#removelistenerlistener)
-
-5. Journeys Web To App
-  + [.setBranchViewData()](#setbranchviewdatadata)
-  + [.closeJourney()](#closejourneycallback)
-
-6. Firebase App Indexing
-  + [.autoAppIndex()](#autoappindexdata-callback)
 
 7. Revenue Analytics
   + [.trackCommerceEvent()](#trackcommerceeventevent-commerce_data-metadata-callback)

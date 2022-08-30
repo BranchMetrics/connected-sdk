@@ -119,8 +119,7 @@
 	}
 
 	var d = { };
-	// TODO: Add validation for v1/pageview and v1/dismiss, move setBranchViewData into a separate location so that it is isolated
-	if (typeof resource.params !== 'undefined' && resource.endpoint !== '/v1/pageview' && resource.endpoint !== '/v1/dismiss') {
+	if (typeof resource.params !== 'undefined') {
 		for (k in resource.params) {
 			if (resource.params.hasOwnProperty(k)) {
 				err = resource.params[k](resource.endpoint, k, data[k]);
@@ -136,11 +135,6 @@
 				}
 			}
 		}
-	}
-	else if (resource.endpoint === '/v1/pageview' || resource.endpoint === '/v1/dismiss') {
-		// /v1/pageview and v1/dismiss require custom keys to be available in the post body due
-		// to .setBranchViewData() call so the logic above won't work
-		utils.merge(d, data);
 	}
 
 	if (resource.method === 'POST') {
@@ -158,12 +152,6 @@
 		d['metadata'] = safejson.stringify(d['metadata'] || {});
 		if (d.hasOwnProperty('commerce_data')) {
 			d['commerce_data'] = safejson.stringify(d['commerce_data'] || {});
-		}
-	}
-
-	if (resource.endpoint === '/v1/pageview' || resource.endpoint === '/v1/dismiss') {
-		if (d['metadata']) {
-			d['metadata'] = safejson.stringify(d['metadata'] || {});
 		}
 	}
 
@@ -360,14 +348,7 @@
   */
  Server.prototype.request = function(resource, data, storage, callback) {
 	var self = this;
-
-	if (resource.endpoint === "/v1/pageview" && data && data['journey_displayed']) {
-		// special case for pageview endpoint
-		utils.currentRequestBrttTag = resource.endpoint + '-1-brtt';
-	}
-	else {
-		utils.currentRequestBrttTag = resource.endpoint + '-brtt';
-	}
+	utils.currentRequestBrttTag = resource.endpoint + '-brtt';
 
 	if ((resource.endpoint === "/v1/url" || resource.endpoint === "/v1/has-app") && Object.keys(utils.instrumentation).length > 1) {
 		delete utils.instrumentation['-brtt'];

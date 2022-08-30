@@ -205,37 +205,6 @@ resources.qrCode = {
 	})
 };
 
-resources.deepview = {
-	destination: config.api_endpoint,
-	endpoint: "/v1/deepview",
-	jsonp: true,
-	method: utils.httpMethod.POST,
-	params: defaults({
-		"campaign": validator(false, validationTypes.STRING),
-		"_t": validator(false, validationTypes.STRING),
-		"channel": validator(false, validationTypes.STRING),
-		"data": validator(true, validationTypes.STRING),
-		"feature": validator(false, validationTypes.STRING),
-		"link_click_id": validator(false, validationTypes.STRING),
-		"open_app": validator(false, validationTypes.BOOLEAN),
-		"append_deeplink_path": validator(false, validationTypes.BOOLEAN),
-		"stage": validator(false, validationTypes.STRING),
-		"tags": validator(false, validationTypes.ARRAY),
-		"deepview_type": validator(true, validationTypes.STRING),
-		"source": validator(true, validationTypes.STRING)
-	})
-};
-
-resources.hasApp = {
-	destination: config.api_endpoint,
-	endpoint: "/v1/has-app",
-	method: utils.httpMethod.GET,
-	params: {
-		"browser_fingerprint_id": validator(true, validationTypes.STRING),
-		"instrumentation": validator(false, validationTypes.STRING)
-	}
-};
-
 resources.event = {
 	destination: config.api_endpoint,
 	endpoint: "/v1/event",
@@ -288,59 +257,6 @@ resources.logCustomEvent = {
 		"content_items": validator(false, validationTypes.STRING),
 		"customer_event_alias": validator(false, validationTypes.STRING)
 	}
-};
-
-resources.pageview = {
-	destination: config.api_endpoint,
-	endpoint: "/v1/pageview",
-	method: utils.httpMethod.POST,
-	params: defaults({
-		"event": validator(true, validationTypes.STRING),
-		"metadata": validator(false, validationTypes.OBJECT),
-		"initial_referrer": validator(false, validationTypes.STRING),
-		"tracking_disabled": validator(false, validationTypes.BOOLEAN),
-		"branch_view_id": validator(false, validationTypes.STRING),
-		"no_journeys": validator(false, validationTypes.BOOLEAN),
-		"user_language": validator(false, validationTypes.STRING),
-		"open_app": validator(false, validationTypes.BOOLEAN),
-		"has_app_websdk": validator(false, validationTypes.BOOLEAN),
-		"source": validator(false, validationTypes.STRING),
-		"feature": validator(false, validationTypes.STRING),
-		"is_iframe": validator(false, validationTypes.BOOLEAN),
-		"data": validator(false, validationTypes.OBJECT),
-		"callback_string": validator(false, validationTypes.STRING),
-		"journey_displayed": validator(false, validationTypes.BOOLEAN),
-		"audience_rule_id": validator(false, validationTypes.STRING),
-		"journey_dismissals": validator(false, validationTypes.OBJECT),
-		"identity_id": validator(false, validationTypes.STRING),
-		"identity": validator(true, validationTypes.STRING)
-	})
-};
-
-resources.dismiss = {
-	destination: config.api_endpoint,
-	endpoint: "/v1/dismiss",
-	method: utils.httpMethod.POST,
-	params: defaults({
-		"event": validator(true, validationTypes.STRING),
-		"metadata": validator(false, validationTypes.OBJECT),
-		"initial_referrer": validator(false, validationTypes.STRING),
-		"tracking_disabled": validator(false, validationTypes.BOOLEAN),
-		"branch_view_id": validator(false, validationTypes.STRING),
-		"no_journeys": validator(false, validationTypes.BOOLEAN),
-		"user_language": validator(false, validationTypes.STRING),
-		"open_app": validator(false, validationTypes.BOOLEAN),
-		"has_app_websdk": validator(false, validationTypes.BOOLEAN),
-		"source": validator(false, validationTypes.STRING),
-		"feature": validator(false, validationTypes.STRING),
-		"is_iframe": validator(false, validationTypes.BOOLEAN),
-		"data": validator(false, validationTypes.OBJECT),
-		"callback_string": validator(false, validationTypes.STRING),
-		"journey_displayed": validator(false, validationTypes.BOOLEAN),
-		"audience_rule_id": validator(false, validationTypes.STRING),
-		"journey_dismissals": validator(false, validationTypes.OBJECT),
-		"dismissal_source": validator(false, validationTypes.STRING)
-	})
 };
 
 resources.crossPlatformIds = {
