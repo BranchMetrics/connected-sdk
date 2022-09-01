@@ -267,7 +267,7 @@ utils.getParameterByName = function(name) {
 };
 
 utils.cleanLinkData = function(linkData) {
-	linkData['source'] = 'web-sdk';
+	linkData['source'] = 'connected-sdk';
 	var data = linkData['data'];
 
 	switch (typeof data) {
@@ -1089,7 +1089,7 @@ utils.getUserData = function(branch) {
 	user_data = utils.addPropertyIfNotNull(user_data, "browser_fingerprint_id", branch.browser_fingerprint_id);
 	user_data = utils.addPropertyIfNotNull(user_data, "developer_identity", branch.identity);
 	user_data = utils.addPropertyIfNotNull(user_data, "identity", branch.identity);
-	user_data = utils.addPropertyIfNotNull(user_data, "sdk", "web");
+	user_data = utils.addPropertyIfNotNull(user_data, "sdk", config.sdk);
 	user_data = utils.addPropertyIfNotNull(user_data, "sdk_version", config.version);
 	return user_data;
 };

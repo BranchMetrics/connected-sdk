@@ -130,7 +130,7 @@ Branch = function() {
 
 	this._server = new Server();
 
-	var sdk = 'web';
+	var sdk = config.sdk;
 
 	/** @type {Array<utils.listener>} */
 	this._listeners = [ ];

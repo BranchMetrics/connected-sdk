@@ -13,7 +13,7 @@ goog.require('utils');
 /*globals Ti */
 
 var COOKIE_MS = 365 * 24 * 60 * 60 * 1000;
-var BRANCH_KEY_PREFIX = 'BRANCH_WEBSDK_KEY';
+var BRANCH_KEY_PREFIX = 'BRANCH_CONNECTEDSDK_KEY';
 
 /** @typedef {undefined|{get:function(string, boolean=), set:function(string, (string|boolean), boolean=),
  * remove:function(string), clear:function(), isEnabled:function()}} */
