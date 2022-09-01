@@ -5,6 +5,7 @@
 config.app_service_endpoint = 'https://app.link';
 config.link_service_endpoint = 'https://bnc.lt';
 config.api_endpoint = 'https://api.branch.io';
-config.version = '2.64.0';
+config.version = '1.0.0';
+config.sdk='connected';
 
 window.DEBUG = false;

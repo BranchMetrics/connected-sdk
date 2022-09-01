@@ -146,7 +146,7 @@ describe('utils', function() {
 				'}'
 			].join('');
 			var expectedCleanedLinkData = {
-				source: "web-sdk",
+				source: "connected-sdk",
 				data: dataString
 			};
 			assert.deepEqual(
@@ -185,7 +185,7 @@ describe('utils', function() {
 				field2: "67890",
 				"field 3": true,
 				field4: null,
-				source: "web-sdk"
+				source: "connected-sdk"
 			};
 			assert.deepEqual(
 				utils.cleanLinkData(linkData),
@@ -224,7 +224,7 @@ describe('utils', function() {
 				field2: "67890",
 				"field 3": true,
 				field4: null,
-				source: "web-sdk"
+				source: "connected-sdk"
 			};
 			assert.deepEqual(
 				utils.cleanLinkData((utils.cleanLinkData(linkData))),

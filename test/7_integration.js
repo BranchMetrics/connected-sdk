@@ -25,7 +25,7 @@ describe('Integration tests', function() {
 				while (cookie.charAt(0) === ' ') {
 					cookie = cookie.substring(1, cookie.length);
 				}
-				if (cookie.indexOf('BRANCH_WEBSDK_COOKIE') === 0) {
+				if (cookie.indexOf('BRANCH_CONNECTEDSDK_COOKIE') === 0) {
 					if (temp && cookie.indexOf('branch_expiration_date=') === -1) {
 						deleteCookie(cookie);
 					}
@@ -113,7 +113,7 @@ describe('Integration tests', function() {
 			assert.strictEqual(
 				requests[0].src,
 				config.app_service_endpoint +
-					'/_r?sdk=web' +
+					'/_r?sdk=connected' +
 					config.version +
 					'&branch_key=' +
 					branch.branch_key +
@@ -156,7 +156,7 @@ describe('Integration tests', function() {
 				browser_fingerprint_id: browser_fingerprint_id,
 				identity_id: identity_id,
 				options: "%7B%7D",
-				sdk: 'web' + config.version
+				sdk: 'connected' + config.version
 			};
 
 			if (requestObj.initial_referrer) {
