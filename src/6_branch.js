@@ -224,19 +224,6 @@ Branch.prototype._referringLink = function() {
 	return null;
 };
 
-/***
- * @function Branch._publishEvent
- * @param {string} event
- * @param {Object} data - _optional_ - data to pass into listener callback.
- */
-Branch.prototype._publishEvent = function(event, data) {
-	for (var i = 0; i < this._listeners.length; i++) {
-		if (!this._listeners[i].event || this._listeners[i].event === event) {
-			this._listeners[i].listener(event, data);
-		}
-	}
-};
-
 /**
  * @function Branch.init
  * @param {string} branch_key - _required_ - Your Branch [live key](http://dashboard.branch.io/settings), or (deprecated) your app id.
@@ -337,6 +324,8 @@ Branch.prototype['init'] = wrap(
 			utils.cleanApplicationAndSessionStorage(self);
 		}
 
+		var advertising_ids = utils.validateParameterType(options['advertising_ids'], "object") ? options['advertising_ids'] : null;
+
 		// initialize identity_id from storage
 		// note the previous line scrubs this if tracking disabled.
 		var localData = session.get(self._storage, true);
@@ -378,32 +367,29 @@ Branch.prototype['init'] = wrap(
 		var link_identifier = (branchMatchIdFromOptions || utils.getParamValue('_branch_match_id') || utils.hashValue('r'));
 		var freshInstall = !self.identity_id; // initialized from local storage above
 		self._branchViewEnabled = !!self._storage.get('branch_view_enabled');
-		var checkHasApp = function(cb) {
+		var call_r = function(cb) {
 			var params_r = { "sdk": config.version, "branch_key": self.branch_key };
 			var currentSessionData = session.get(self._storage) || {};
 			var permData = session.get(self._storage, true) || {};
 			if (permData['browser_fingerprint_id']) {
 				params_r['_t'] = permData['browser_fingerprint_id'];
 			}
-
-			if (!utils.isSafari11OrGreater() && !utils.isIOSWKWebView()) {
-				self._api(
-					resources._r,
-					params_r,
-					function(err, browser_fingerprint_id) {
-						if (err) {
-							self.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND;
-							self.init_state_fail_details = err.message;
-						}
-						if (browser_fingerprint_id) {
-							currentSessionData['browser_fingerprint_id'] = browser_fingerprint_id;
+			self._api(
+				resources._r,
+				params_r,
+				function(err, browser_fingerprint_id) {
+					if (err) {
+						self.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND;
+						self.init_state_fail_details = err.message;
+					}
+					if (browser_fingerprint_id) {
+						currentSessionData['browser_fingerprint_id'] = browser_fingerprint_id;
+						if (cb) {
+							cb(null, currentSessionData);
 						}
 					}
-				);
-			}
-			if (cb) {
-				cb(null, currentSessionData);
-			}
+				}
+			);
 		};
 
 		var restoreIdentityOnInstall = function(data) {
@@ -484,7 +470,7 @@ Branch.prototype['init'] = wrap(
 					self.changeEventListenerAdded = true;
 					document.addEventListener(changeEvent, function() {
 						if (!document[hidden]) {
-							checkHasApp(null);
+							call_r(null);
 							if (typeof self._deepviewRequestForReplay === 'function') {
 								self._deepviewRequestForReplay();
 							}
@@ -498,7 +484,7 @@ Branch.prototype['init'] = wrap(
 			session.update(self._storage, { "data": "" });
 			session.update(self._storage, { "referring_link": "" });
 			attachVisibilityEvent();
-			checkHasApp(finishInit);
+			call_r(finishInit);
 			return;
 		}
 
@@ -515,86 +501,49 @@ Branch.prototype['init'] = wrap(
 
 		// Execute the /v1/open right away or after _open_delay_ms.
 		var open_delay = parseInt(utils.getParamValue('[?&]_open_delay_ms'), 10);
-
-		if (!utils.isSafari11OrGreater() && !utils.isIOSWKWebView()) {
-			self._api(
-				resources._r,
-				params_r,
-				function(err, browser_fingerprint_id) {
-					if (err) {
-						self.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND;
-						self.init_state_fail_details = err.message;
-						return finishInit(err, null);
-					}
-					utils.delay(function() {
-						self._api(
-							resources.open,
-							{
-								"link_identifier": link_identifier,
-								"browser_fingerprint_id": link_identifier || browser_fingerprint_id,
-								"alternative_browser_fingerprint_id": permData['browser_fingerprint_id'],
-								"options": options,
-								"initial_referrer": utils.getInitialReferrer(self._referringLink()),
-								"current_url": utils.getCurrentUrl(),
-								"screen_height": utils.getScreenHeight(),
-								"screen_width": utils.getScreenWidth()
-							},
-							function(err, data) {
-								if (err) {
-									self.init_state_fail_code = init_state_fail_codes.OPEN_FAILED;
-									self.init_state_fail_details = err.message;
-								}
-								if (!err && typeof data === 'object') {
-									if (data['branch_view_enabled']) {
-										self._branchViewEnabled = !!data['branch_view_enabled'];
-										self._storage.set('branch_view_enabled', self._branchViewEnabled);
-									}
-									if (link_identifier) {
-										data['click_id'] = link_identifier;
-									}
-								}
-								attachVisibilityEvent();
-								finishInit(err, data);
-							}
-						);
-					}, open_delay);
+		self._api(
+			resources._r,
+			params_r,
+			function(err, browser_fingerprint_id) {
+				if (err) {
+					self.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND;
+					self.init_state_fail_details = err.message;
+					return finishInit(err, null);
 				}
-			);
-		}
-		else {
-			utils.delay(function() {
-				self._api(
-					resources.open,
-					{
-						"link_identifier": link_identifier,
-						"browser_fingerprint_id": link_identifier || permData['browser_fingerprint_id'],
-						"alternative_browser_fingerprint_id": permData['browser_fingerprint_id'],
-						"options": options,
-						"initial_referrer": utils.getInitialReferrer(self._referringLink()),
-						"current_url": utils.getCurrentUrl(),
-						"screen_height": utils.getScreenHeight(),
-						"screen_width": utils.getScreenWidth()
-					},
-					function(err, data) {
-						if (err) {
-							self.init_state_fail_code = init_state_fail_codes.OPEN_FAILED;
-							self.init_state_fail_details = err.message;
-						}
-						if (!err && typeof data === 'object') {
-							if (data['branch_view_enabled']) {
-								self._branchViewEnabled = !!data['branch_view_enabled'];
-								self._storage.set('branch_view_enabled', self._branchViewEnabled);
+				utils.delay(function() {
+					self._api(
+						resources.open,
+						{
+							"link_identifier": link_identifier,
+							"browser_fingerprint_id": link_identifier || browser_fingerprint_id,
+							"alternative_browser_fingerprint_id": permData['browser_fingerprint_id'],
+							"options": options,
+							"initial_referrer": utils.getInitialReferrer(self._referringLink()),
+							"current_url": utils.getCurrentUrl(),
+							"screen_height": utils.getScreenHeight(),
+							"screen_width": utils.getScreenWidth()
+						},
+						function(err, data) {
+							if (err) {
+								self.init_state_fail_code = init_state_fail_codes.OPEN_FAILED;
+								self.init_state_fail_details = err.message;
 							}
-							if (link_identifier) {
-								data['click_id'] = link_identifier;
+							if (!err && typeof data === 'object') {
+								if (data['branch_view_enabled']) {
+									self._branchViewEnabled = !!data['branch_view_enabled'];
+									self._storage.set('branch_view_enabled', self._branchViewEnabled);
+								}
+								if (link_identifier) {
+									data['click_id'] = link_identifier;
+								}
 							}
+							attachVisibilityEvent();
+							finishInit(err, data);
 						}
-						attachVisibilityEvent();
-						finishInit(err, data);
-					}
-				);
-			}, open_delay);
-		}
+					);
+				}, open_delay);
+			}
+		);
 	},
 	true
 );
