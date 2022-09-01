@@ -2,7 +2,7 @@
 
 goog.require('storage'); // jshint ignore:line
 
-var BRANCH_KEY_PREFIX = 'BRANCH_WEBSDK_KEY';
+var BRANCH_KEY_PREFIX = 'BRANCH_CONNECTEDSDK_KEY';
 var ITEM_KEY = 'key';
 var ITEM_KEY_UNSTORED = 'key unstored';
 var ITEM_VALUE = 'value';
