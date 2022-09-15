@@ -1181,7 +1181,6 @@ describe('utils', function() {
 				"ROKU_RIDA": "",
 				"MAC_ADDRESS": "",
 				"OAID": "",
-				"ROKU_RIDA": "",
 				"IDFA": "",
 				"AAID": "",
 				"ANDROID_ID": "",
