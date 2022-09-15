@@ -1198,3 +1198,27 @@ utils.delay = function(operation, delay) {
 
 	setTimeout(operation, delay);
 };
+
+/**
+ * checks if the passed advertiserIDs object has valid key names or not
+ * @param {object} advertiserIDs object
+ * @return {array}
+ */
+utils.validateAdvertiserIDs = function(advertiserIdsObj = {}) {
+	const advertiserIDsSchema = [ "SAMSUNG_IFA", "LG_IFA", "PANASONIC_IFA", "PLAYSTATION_IFA", "XBOX_MSAI", "ROKU_RIDA", "MAC_ADDRESS", "OAID", "IDFA", "AAID", "ANDROID_ID", "IDFV" ];
+	const errors = Object
+		.keys(advertiserIdsObj)
+		.filter(key => advertiserIDsSchema.indexOf(key) === -1)
+		.map(key => new Error(`${key} is invalid.`));
+
+	if (errors.length > 0) {
+		for (let i = 0; i < errors.length; i++) {
+			console.log(errors[i]);
+		}
+		return false;
+	}
+	else {
+		return true;
+	}
+};
+

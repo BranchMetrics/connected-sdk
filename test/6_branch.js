@@ -17,7 +17,7 @@ describe('Branch', function() {
 	var sandbox;
 	var requests;
 
-	window.sdk_version = 'connected' + config.version;
+	window.sdk_version = config.version;
 
 	beforeEach(function() {
 		testUtils.go('');

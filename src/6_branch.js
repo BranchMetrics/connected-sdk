@@ -132,10 +132,14 @@ Branch = function() {
 
 	var sdk = config.sdk;
 
+	var version = config.version;
+
 	/** @type {Array<utils.listener>} */
 	this._listeners = [ ];
 
-	this.sdk = sdk + config.version;
+	this.sdk = sdk;
+
+	this.sdk_version = version;
 
 	this.init_state = init_states.NO_INIT;
 	this.init_state_fail_code = init_state_fail_codes.NO_FAILURE;
@@ -189,6 +193,7 @@ Branch.prototype._api = function(resource, obj, callback) {
 	if (((resource.params && resource.params['sdk']) ||
 			(resource.queryPart && resource.queryPart['sdk'])) && this.sdk) {
 		obj['sdk'] = this.sdk;
+		obj['sdk_version'] = this.sdk_version;
 	}
 
 	if (((resource.params && resource.params['browser_fingerprint_id']) ||
@@ -324,7 +329,7 @@ Branch.prototype['init'] = wrap(
 			utils.cleanApplicationAndSessionStorage(self);
 		}
 
-		var advertising_ids = utils.validateParameterType(options['advertising_ids'], "object") ? options['advertising_ids'] : null;
+		self.advertising_ids = options && options['advertising_ids'] && utils.validateParameterType(options['advertising_ids'], "object") && utils.validateAdvertiserIDs(options['advertising_ids']) ? options['advertising_ids'] : {};
 
 		// initialize identity_id from storage
 		// note the previous line scrubs this if tracking disabled.
@@ -518,6 +523,7 @@ Branch.prototype['init'] = wrap(
 							"browser_fingerprint_id": link_identifier || browser_fingerprint_id,
 							"alternative_browser_fingerprint_id": permData['browser_fingerprint_id'],
 							"options": options,
+							"advertising_ids": self.advertising_ids,
 							"initial_referrer": utils.getInitialReferrer(self._referringLink()),
 							"current_url": utils.getCurrentUrl(),
 							"screen_height": utils.getScreenHeight(),
