@@ -282,7 +282,8 @@ describe('Server', function() {
 					requests[0].requestBody,
 					"browser_fingerprint_id=" + browser_fingerprint_id +
 					"&identity_id=" + identity_id +
-					"&sdk=web" + config.version +
+					"&sdk=" + config.sdk +
+					"&sdk_version=" + config.version +
 					"&branch_key=" + branch_sample_key +
 					"&options=%7B%7D",
 					'Data correct');
@@ -349,7 +350,8 @@ describe('Server', function() {
 					requests[0].requestBody,
 					"browser_fingerprint_id=" + browser_fingerprint_id +
 					"&identity_id=" + identity_id +
-					"&sdk=web" + config.version +
+					"&sdk=" + config.sdk +
+					"&sdk_version=" + config.version +
 					"&app_id=" + "5680621892404085" +
 					"&options=%7B%7D",
 					'Data correct');
@@ -440,7 +442,8 @@ describe('Server', function() {
 					"identity_id=" + identity_id +
 					"&identity=test_id" +
 					"&browser_fingerprint_id=" + browser_fingerprint_id +
-					"&sdk=web" + config.version +
+					"&sdk=" + config.sdk +
+					"&sdk_version=" + config.version +
 					"&session_id=" + session_id +
 					"&branch_key=" + branch_sample_key,
 					'Params correct'
@@ -547,7 +550,8 @@ describe('Server', function() {
 					"session_id=" + session_id +
 					"&browser_fingerprint_id=" + browser_fingerprint_id +
 					"&identity_id=" + identity_id +
-					"&sdk=web" + config.version +
+					"&sdk=" + config.sdk +
+					"&sdk_version=" + config.version +
 					"&branch_key=" + branch_sample_key,
 					'Expected request body for the first request'
 				);
@@ -626,9 +630,10 @@ describe('Server', function() {
 				assert.strictEqual(requests.length, 1, 'Request made');
 				assert.strictEqual(
 					requests[0].src,
-					config.app_service_endpoint + '/_r?sdk=connected' + config.version +
+					config.app_service_endpoint + '/_r?sdk=' + config.sdk +
 					'&_t=79336952217731267' +
 					'&branch_key=' + branch_sample_key +
+					'&sdk_version=' + config.version +
 					'&callback=branch_callback__' + (server._jsonp_callback_index - 1),
 					'Endpoint correct');
 				requests[0].callback();
@@ -672,7 +677,8 @@ describe('Server', function() {
 					requests[0].requestBody,
 					"identity_id=" + identity_id +
 					"&browser_fingerprint_id=" + browser_fingerprint_id +
-					"&sdk=connected" + config.version +
+					"&sdk=" + config.sdk +
+					"&sdk_version=" + config.version +
 					"&session_id=" + session_id +
 					"&branch_key=" + branch_sample_key
 				);
@@ -868,7 +874,8 @@ describe('Server', function() {
 					"event=testevent" + metadataString +
 					"&browser_fingerprint_id=" + browser_fingerprint_id +
 					"&identity_id=" + identity_id +
-					"&sdk=connected" + config.version +
+					"&sdk=" + config.sdk +
+					"&sdk_version=" + config.version +
 					"&session_id=" + session_id +
 					"&branch_key=" + branch_sample_key
 				);

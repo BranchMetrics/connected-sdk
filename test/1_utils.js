@@ -1168,4 +1168,35 @@ describe('utils', function() {
 			assert.equal(utils.isIOSWKWebView(), false);
 		});
 	});
+
+	describe.only('validateAdvertiserIDs function', function() {
+		let obj;
+		beforeEach(function() {
+			obj = {
+				"SAMSUNG_IFA": "",
+				"LG_IFA": "",
+				"PANASONIC_IFA": "",
+				"PLAYSTATION_IFA": "",
+				"XBOX_MSAI": "",
+				"ROKU_RIDA": "",
+				"MAC_ADDRESS": "",
+				"OAID": "",
+				"IDFA": "",
+				"AAID": "",
+				"ANDROID_ID": "",
+				"IDFV": ""
+			};
+		});
+
+		it('should return true', function() {
+
+			assert.equal(utils.validateAdvertiserIDs(), true);
+		});
+
+		it('should return false for Chrome', function() {
+			obj.random_id = "";
+
+			assert.equal(utils.validateAdvertiserIDs(), false);
+		});
+	});
 });
