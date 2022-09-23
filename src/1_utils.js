@@ -1201,8 +1201,8 @@ utils.delay = function(operation, delay) {
 
 /**
  * checks if the passed advertiserIDs object has valid key names or not
- * @param {object} advertiserIDs object
- * @return {array}
+ * @param {object} advertiserIdsObj object
+ * @return {boolean}
  */
 utils.validateAdvertiserIDs = function(advertiserIdsObj = {}) {
 	const advertiserIDsSchema = [ "SAMSUNG_IFA", "LG_IFA", "PANASONIC_IFA", "PLAYSTATION_IFA", "XBOX_MSAI", "ROKU_RIDA", "MAC_ADDRESS", "OAID", "IDFA", "AAID", "ANDROID_ID", "IDFV" ];

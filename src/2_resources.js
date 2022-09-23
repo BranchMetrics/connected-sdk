@@ -91,6 +91,13 @@ function defaults(obj) {
 	return utils.merge(obj, def);
 }
 
+function v2defaults(obj) {
+	var def = {
+		"user_data": validator(true, validationTypes.OBJECT)
+	};
+	return utils.merge(obj, def);
+}
+
 resources.open = {
 	destination: config.api_endpoint,
 	endpoint: "/v1/open",
@@ -225,28 +232,26 @@ resources.logStandardEvent = {
 	destination: config.api_endpoint,
 	endpoint: "/v2/event/standard",
 	method: utils.httpMethod.POST,
-	params: {
+	params: v2defaults({
 		"name": validator(true, validationTypes.STRING),
-		"user_data": validator(true, validationTypes.STRING),
 		"custom_data": validator(false, validationTypes.STRING),
 		"event_data": validator(false, validationTypes.STRING),
 		"content_items": validator(false, validationTypes.STRING),
 		"customer_event_alias": validator(false, validationTypes.STRING)
-	}
+	})
 };
 
 resources.logCustomEvent = {
 	destination: config.api_endpoint,
 	endpoint: "/v2/event/custom",
 	method: utils.httpMethod.POST,
-	params: {
+	params: v2defaults({
 		"name": validator(true, validationTypes.STRING),
-		"user_data": validator(true, validationTypes.STRING),
 		"custom_data": validator(false, validationTypes.STRING),
 		"event_data": validator(false, validationTypes.STRING),
 		"content_items": validator(false, validationTypes.STRING),
 		"customer_event_alias": validator(false, validationTypes.STRING)
-	}
+	})
 };
 
 resources.crossPlatformIds = {
