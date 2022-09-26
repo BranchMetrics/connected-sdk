@@ -8,4 +8,3 @@ config.api_endpoint = 'https://api.branch.io';
 config.version = '1.0.0';
 config.sdk='connected';
 
-window.DEBUG = false;
