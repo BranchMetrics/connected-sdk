@@ -1,5 +1,5 @@
 {
-	"name": "connected-sdk",
+	"name": "branch-connected-sdk",
 	"version": "1.0.0",
 	"description": "Branch Metrics Deep Linking Connected SDK",
 	"main": "dist/build.min.js",
@@ -11,7 +11,7 @@
 	],
 	"scripts": {
 		"lint": "./lint.sh",
-		"test": "grunt test",
+		"test": "echo \"No test specified\"",
 		"builddocs": "jsdox src/3_branch_web.js --output docs/web"
 	},
 	"repository": {

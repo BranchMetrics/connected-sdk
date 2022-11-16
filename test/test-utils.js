@@ -498,8 +498,8 @@
 
 		window.branch_sample_key = 'key_live_ljmAgMXod0f4V0wNEf4ZubhpphenI4wS',
 		window.session_id = '98807509250212101',
-		window.identity_id = '98807509250212101',
-		window.browser_fingerprint_id = '79336952217731267';
+		window.randomized_bundle_token = '98807509250212101',
+		window.randomized_device_token = '79336952217731267';
 		window.device_fingerprint_id = '79336952217731267';
 
 		// Fix for IE 9
@@ -518,11 +518,11 @@
 			var p = utils.merge(
 				{
 					branch_key: branch_sample_key,
-					browser_fingerprint_id: browser_fingerprint_id,
-					identity_id: identity_id,
+					randomized_device_token: randomized_device_token,
+					randomized_bundle_token: randomized_bundle_token,
 					sdk: window.sdk_version,
 					session_id: session_id,
-					_t: browser_fingerprint_id
+					_t: randomized_device_token
 				},
 				extra || {}
 			);

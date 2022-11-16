@@ -7,7 +7,7 @@ goog.require('storage'); // jshint unused:false
 goog.require('config');
 goog.require('safejson');
 
-/*globals branch_sample_key, session_id, identity_id, browser_fingerprint_id, BranchStorage */
+/*globals branch_sample_key, session_id, randomized_bundle_token, randomized_device_token, BranchStorage */
 
 describe('Server helpers', function() {
 	var server = new Server();
@@ -262,7 +262,7 @@ describe('Server', function() {
 				storage.clear();
 			});
 
-			it('should pass in branch_key and browser_fingerprint_id', function(done) {
+			it('should pass in branch_key and randomized_device_token', function(done) {
 				storage['set']('use_jsonp', false);
 				var assert = testUtils.plan(5, done);
 				server.request(
@@ -280,8 +280,8 @@ describe('Server', function() {
 				assert.strictEqual(requests[0].method, 'POST', 'Method correct');
 				assert.strictEqual(
 					requests[0].requestBody,
-					"browser_fingerprint_id=" + browser_fingerprint_id +
-					"&identity_id=" + identity_id +
+					"randomized_device_token=" + randomized_device_token +
+					"&randomized_bundle_token=" + randomized_bundle_token +
 					"&sdk=" + config.sdk +
 					"&sdk_version=" + config.version +
 					"&branch_key=" + branch_sample_key +
@@ -348,8 +348,8 @@ describe('Server', function() {
 				assert.strictEqual(requests.length, 1, 'Request made');
 				assert.strictEqual(
 					requests[0].requestBody,
-					"browser_fingerprint_id=" + browser_fingerprint_id +
-					"&identity_id=" + identity_id +
+					"randomized_device_token=" + randomized_device_token +
+					"&randomized_bundle_token=" + randomized_bundle_token +
 					"&sdk=" + config.sdk +
 					"&sdk_version=" + config.version +
 					"&app_id=" + "5680621892404085" +
@@ -439,9 +439,9 @@ describe('Server', function() {
 				assert.strictEqual(requests[0].method, 'POST', 'Method correct');
 				assert.strictEqual(
 					requests[0].requestBody,
-					"identity_id=" + identity_id +
+					"randomized_bundle_token=" + randomized_bundle_token +
 					"&identity=test_id" +
-					"&browser_fingerprint_id=" + browser_fingerprint_id +
+					"&randomized_device_token=" + randomized_device_token +
 					"&sdk=" + config.sdk +
 					"&sdk_version=" + config.version +
 					"&session_id=" + session_id +
@@ -508,17 +508,17 @@ describe('Server', function() {
 				assert.strictEqual(requests.length, 0, 'No request made');
 			});
 
-			it('should fail without identity_id', function(done) {
+			it('should fail without randomized_bundle_token', function(done) {
 				var assert = testUtils.plan(2, done);
 				server.request(
 					resources.profile,
-					testUtils.params({ identity: 'foo' }, [ 'identity_id' ]),
+					testUtils.params({ identity: 'foo' }, [ 'randomized_bundle_token' ]),
 					storage,
 					function(err) {
 						err = safejson.parse(err.message);
 						assert.strictEqual(
 							err.message,
-							"API request /v1/profile missing parameter identity_id",
+							"API request /v1/profile missing parameter randomized_bundle_token",
 							'Expected err.message'
 						);
 					}
@@ -548,8 +548,8 @@ describe('Server', function() {
 				assert.strictEqual(
 					requests[0].requestBody,
 					"session_id=" + session_id +
-					"&browser_fingerprint_id=" + browser_fingerprint_id +
-					"&identity_id=" + identity_id +
+					"&randomized_device_token=" + randomized_device_token +
+					"&randomized_bundle_token=" + randomized_bundle_token +
 					"&sdk=" + config.sdk +
 					"&sdk_version=" + config.version +
 					"&branch_key=" + branch_sample_key,
@@ -660,7 +660,7 @@ describe('Server', function() {
 				storage.clear();
 			});
 
-			it('should pass in branch_key and identity_id', function(done) {
+			it('should pass in branch_key and randomized_bundle_token', function(done) {
 				storage['set']('use_jsonp', false);
 				var assert = testUtils.plan(5, done);
 
@@ -675,8 +675,8 @@ describe('Server', function() {
 				assert.strictEqual(requests[0].method, 'POST', 'Method correct');
 				assert.strictEqual(
 					requests[0].requestBody,
-					"identity_id=" + identity_id +
-					"&browser_fingerprint_id=" + browser_fingerprint_id +
+					"randomized_bundle_token=" + randomized_bundle_token +
+					"&randomized_device_token=" + randomized_device_token +
 					"&sdk=" + config.sdk +
 					"&sdk_version=" + config.version +
 					"&session_id=" + session_id +
@@ -724,17 +724,17 @@ describe('Server', function() {
 				assert.strictEqual(requests.length, 0, 'No request made');
 			});
 
-			it('should fail without identity_id', function(done) {
+			it('should fail without randomized_bundle_token', function(done) {
 				var assert = testUtils.plan(2, done);
 				server.request(
 					resources.link,
-					testUtils.params({ }, [ 'identity_id' ]),
+					testUtils.params({ }, [ 'randomized_bundle_token' ]),
 					storage,
 					function(err) {
 						err = safejson.parse(err.message);
 						assert.strictEqual(
 							err.message,
-							"API request /v1/url missing parameter identity_id"
+							"API request /v1/url missing parameter randomized_bundle_token"
 						);
 					}
 				);
@@ -839,212 +839,7 @@ describe('Server', function() {
 			});
 		});
 
-		describe('/v1/event', function() {
-			var metadata = {
-				"url": "testurl",
-				"user_agent": "test_agent",
-				"language": "test_language"
-			};
-			var metadataString = '&metadata=' + encodeURIComponent(JSON.stringify(metadata));
-			beforeEach(function() {
-				requests = [];
-				storage.clear();
-			});
-
-			it('should pass in branch_key, session_id, event and metadata', function(done) {
-				storage['set']('use_jsonp', false);
-				var assert = testUtils.plan(5, done);
-
-				server.request(
-					resources.event,
-					testUtils.params({ "event": "testevent", "metadata": metadata }),
-					storage,
-					assert.done
-				);
-
-				assert.strictEqual(requests.length, 1, 'Request made');
-				assert.strictEqual(
-					requests[0].url,
-					config.api_endpoint + '/v1/event',
-					'Endpoint correct'
-				);
-				assert.strictEqual(requests[0].method, 'POST', 'Method correct');
-				assert.strictEqual(
-					requests[0].requestBody,
-					"event=testevent" + metadataString +
-					"&browser_fingerprint_id=" + browser_fingerprint_id +
-					"&identity_id=" + identity_id +
-					"&sdk=" + config.sdk +
-					"&sdk_version=" + config.version +
-					"&session_id=" + session_id +
-					"&branch_key=" + branch_sample_key
-				);
-
-				requests[0].respond(
-					200,
-					{ "Content-Type": "application/json" },
-					'{ "session_id": 123 }'
-				);
-			});
-
-			it('should pass as a jsonp request', function(done) {
-				var assert = testUtils.plan(3, done);
-				storage['set']('use_jsonp', true);
-
-				var completeParams = testUtils.params({
-					"event": "testevent",
-					"metadata": metadata
-				});
-				server.request(resources.event, completeParams, storage, assert.done);
-				assert.strictEqual(requests.length, 1, 'Request made');
-
-				var encodedData = encodeURIComponent(utils.base64encode(
-					goog.json.serialize(completeParams)
-				));
-				assert.strictEqual(
-					requests[0].src,
-					config.api_endpoint + '/v1/event?&data=' + encodedData +
-					'&callback=branch_callback__' +
-					(server._jsonp_callback_index - 1),
-					'Endpoint correct'
-				);
-				requests[0].callback();
-			});
-
-			it('should fail without branch_key', function(done) {
-				var assert = testUtils.plan(2, done);
-				server.request(
-					resources.event,
-					testUtils.params(
-						{ "event": "testevent", "metadata": metadata },
-						[ 'branch_key' ]
-					),
-					storage,
-					function(err) {
-						err = safejson.parse(err.message);
-						assert.strictEqual(
-							err.message,
-							"API request /v1/event missing parameter branch_key or app_id"
-						);
-					}
-				);
-				assert.strictEqual(requests.length, 0, 'No request made');
-			});
-
-			it('should fail without session_id', function(done) {
-				var assert = testUtils.plan(2, done);
-				server.request(
-					resources.event,
-					testUtils.params(
-						{ "event": "testevent", "metadata": metadata },
-						[ 'session_id' ]
-					),
-					storage,
-					function(err) {
-						err = safejson.parse(err.message);
-						assert.strictEqual(
-							err.message,
-							"API request /v1/event missing parameter session_id"
-						);
-					}
-				);
-				assert.strictEqual(requests.length, 0, 'No request made');
-			});
-
-			it('should fail without event', function(done) {
-				var assert = testUtils.plan(2, done);
-				server.request(
-					resources.event,
-					testUtils.params({ "metadata": metadata }),
-					storage,
-					function(err) {
-						err = safejson.parse(err.message);
-						assert.strictEqual(
-							err.message,
-							"API request /v1/event missing parameter event"
-						);
-					}
-				);
-				assert.strictEqual(requests.length, 0, 'No request made');
-			});
-
-			it('should fail without metadata', function(done) {
-				var assert = testUtils.plan(2, done);
-				server.request(
-					resources.event,
-					testUtils.params({ "event": "testevent" }),
-					storage,
-					function(err) {
-						err = safejson.parse(err.message);
-						assert.strictEqual(
-							err.message,
-							"API request /v1/event missing parameter metadata"
-						);
-					}
-				);
-				assert.strictEqual(requests.length, 0, 'No request made');
-			});
-
-			// param format and type tests
-			it('should fail with metadata as string, not object', function(done) {
-				var assert = testUtils.plan(2, done);
-				server.request(
-					resources.event,
-					testUtils.params({
-						"metadata": "Hello, I'm not an object.",
-						"event": "testevent"
-					}),
-					storage, function(err) {
-						err = safejson.parse(err.message);
-						assert.strictEqual(
-							err.message,
-							"API request /v1/event, parameter metadata is not an object"
-						);
-					}
-				);
-				assert.strictEqual(requests.length, 0, 'No request made');
-			});
-		});
-
 		describe('API tests for trackingDisabled mode', function() {
-			it('Tests a request to v1/event with invalid data, tracking disabled and error callback disabled :: no requests should be made, no errors in callback', function(done) {
-				// This simulates a request being made from branch.init()
-				var assert = testUtils.plan(3, done);
-				utils.userPreferences.trackingDisabled = true;
-				utils.userPreferences.allowErrorsInCallback = false;
-				server.request(
-					resources.event,
-					testUtils.params({
-						"name": "xyz"
-					}),
-					storage, function(err, data) {
-						assert.deepEqual({}, data, "data correct");
-						assert.deepEqual(null, null, "error correct");
-					}
-				);
-				assert.strictEqual(requests.length, 0, 'No request made');
-			});
-			it('Tests a v1/event request with bogus data, tracking disabled and error callback enabled :: no requests should be made, error should be present in callback', function(done) {
-				// This simulates a call to branch.track() after branch is initialized
-				var assert = testUtils.plan(2, done);
-				utils.userPreferences.trackingDisabled = true;
-				utils.userPreferences.allowErrorsInCallback = true;
-				server.request(
-					resources.event,
-					testUtils.params({
-						"name": "xyz"
-					}),
-					storage, function(err, data) {
-						assert.strictEqual(
-							err.message,
-							"Requested operation cannot be completed since tracking is disabled",
-							"Error message correct"
-						);
-						assert.deepEqual(null, null, 'data correct');
-					}
-				);
-				assert.strictEqual(requests.length, 0, 'No request made');
-			});
 			it('Tests a v1/open request, includes correct data, tracking disabled and error callback enabled :: request should go through', function(done) {
 				// This simulates a call to v1/open as part of the Branch initialization process
 				var assert = testUtils.plan(1, done);

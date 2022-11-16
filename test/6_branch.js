@@ -10,7 +10,7 @@ goog.require('safejson');
 
 goog.require('goog.json'); // jshint unused:false
 
-/*globals branch_sample_key, session_id, identity_id, browser_fingerprint_id, BranchStorage */
+/*globals branch_sample_key, session_id, randomized_bundle_token, randomized_device_token, BranchStorage */
 
 describe('Branch', function() {
 	var storage = new BranchStorage([ 'pojo' ]);
@@ -43,12 +43,12 @@ describe('Branch', function() {
 
 		if (runInit) {
 			branch.init(branch_sample_key);
-			requests[0].callback(null, browser_fingerprint_id);
+			requests[0].callback(null, randomized_device_token);
 			requests[1].callback(
 				null,
 				{
-					browser_fingerprint_id: browser_fingerprint_id,
-					identity_id: identity_id,
+					randomized_device_token: randomized_device_token,
+					randomized_bundle_token: randomized_bundle_token,
 					session_id: session_id
 				}
 			);
@@ -100,7 +100,7 @@ describe('Branch', function() {
 			});
 			var expectedResponse = {
 				"session_id": "113636235674656786",
-				"identity_id": "98807509250212101",
+				"randomized_bundle_token": "98807509250212101",
 				"identity": "Branch",
 				"has_app": true,
 				"referring_link": null
@@ -111,7 +111,7 @@ describe('Branch', function() {
 				assert.strictEqual(err, null, 'No error');
 			});
 
-			requests[0].callback(null, browser_fingerprint_id);
+			requests[0].callback(null, randomized_device_token);
 			requests[1].callback(null, expectedResponse);
 			requests[2].callback(null, {});
 
@@ -132,8 +132,7 @@ describe('Branch', function() {
 					"branch_key": branch_sample_key,
 					"link_identifier": undefined,
 					"initial_referrer": requests[1].obj.initial_referrer,
-					"browser_fingerprint_id": browser_fingerprint_id,
-					"alternative_browser_fingerprint_id": undefined,
+					"randomized_device_token": randomized_device_token,
 					"sdk": "connected" + config.version,
 					"options": { },
 					"current_url": utils.getCurrentUrl(),
@@ -154,7 +153,7 @@ describe('Branch', function() {
 			});
 			var expectedResponse = {
 				"session_id": "113636235674656786",
-				"identity_id": "98807509250212101",
+				"randomized_bundle_token": "98807509250212101",
 				"identity": "Branch",
 				"has_app": true,
 				"referring_link": '/c/ngJf86-h'
@@ -165,7 +164,7 @@ describe('Branch', function() {
 				assert.strictEqual(err, null, 'No error');
 			});
 
-			requests[0].callback(null, browser_fingerprint_id);
+			requests[0].callback(null, randomized_device_token);
 			requests[1].callback(null, expectedResponse);
 			requests[2].callback(null, {});
 
@@ -186,8 +185,7 @@ describe('Branch', function() {
 					"branch_key": branch_sample_key,
 					"link_identifier": undefined,
 					"initial_referrer": requests[1].obj.initial_referrer,
-					"browser_fingerprint_id": browser_fingerprint_id,
-					"alternative_browser_fingerprint_id": undefined,
+					"randomized_device_token": randomized_device_token,
 					"sdk": "connected" + config.version,
 					"options": { },
 					"current_url": utils.getCurrentUrl(),
@@ -206,13 +204,13 @@ describe('Branch', function() {
 
 			branch.init(branch_sample_key);
 
-			requests[0].callback(null, browser_fingerprint_id);
+			requests[0].callback(null, randomized_device_token);
 			requests[1].callback(
 				null,
 				{
 					session_id: session_id,
-					browser_fingerprint_id: browser_fingerprint_id,
-					identity_id: identity_id
+					randomized_device_token: randomized_device_token,
+					randomized_bundle_token: randomized_bundle_token
 				}
 			);
 			requests[2].callback(null, {});
@@ -227,7 +225,7 @@ describe('Branch', function() {
 				assert.strictEqual(err.message, 'Invalid app id');
 			});
 
-			requests[0].callback(null, browser_fingerprint_id);
+			requests[0].callback(null, randomized_device_token);
 			requests[1].callback(new Error('Invalid app id'));
 		});
 
@@ -261,7 +259,7 @@ describe('Branch', function() {
 					);
 				});
 
-				requests[0].callback(null, browser_fingerprint_id);
+				requests[0].callback(null, randomized_device_token);
 				requests[1].callback(
 					null,
 					{
@@ -277,8 +275,7 @@ describe('Branch', function() {
 						"branch_key": branch_sample_key,
 						"link_identifier": '12345',
 						"initial_referrer": requests[1].obj.initial_referrer,
-						"browser_fingerprint_id": '12345',
-						"alternative_browser_fingerprint_id": undefined,
+						"randomized_device_token": '12345',
 						"sdk": "connected" + config.version,
 						"options": { },
 						"current_url": utils.getCurrentUrl(),
@@ -315,7 +312,7 @@ describe('Branch', function() {
 						);
 					});
 
-					requests[0].callback(null, browser_fingerprint_id);
+					requests[0].callback(null, randomized_device_token);
 					requests[1].callback(
 						null,
 						{
@@ -331,8 +328,7 @@ describe('Branch', function() {
 							"branch_key": branch_sample_key,
 							"link_identifier": '67890',
 							"initial_referrer": requests[1].obj.initial_referrer,
-							"browser_fingerprint_id": '67890',
-							"alternative_browser_fingerprint_id": undefined,
+							"randomized_device_token": '67890',
 							"sdk": "connected" + config.version,
 							"options": { },
 							"current_url": utils.getCurrentUrl(),
@@ -359,13 +355,13 @@ describe('Branch', function() {
 					'Request to open made, not has_app'
 				);
 			});
-			requests[0].callback(null, browser_fingerprint_id);
+			requests[0].callback(null, randomized_device_token);
 			requests[1].callback(
 				null,
 				{
 					session_id: session_id,
-					browser_fingerprint_id: browser_fingerprint_id,
-					identity_id: identity_id
+					randomized_device_token: randomized_device_token,
+					randomized_bundle_token: randomized_bundle_token
 				}
 			);
 			requests[2].callback(null, {});
@@ -376,13 +372,13 @@ describe('Branch', function() {
 			var branch = initBranch(false);
 			var assert = testUtils.plan(3, done);
 			branch.init(branch_sample_key);
-			requests[0].callback(null, browser_fingerprint_id);
+			requests[0].callback(null, randomized_device_token);
 			requests[1].callback(
 				null,
 				{
 					session_id: session_id,
-					browser_fingerprint_id: browser_fingerprint_id,
-					identity_id: identity_id,
+					randomized_device_token: randomized_device_token,
+					randomized_bundle_token: randomized_bundle_token,
 					data: JSON.stringify({
 						'$desktop_url': window.location.protocol + "//" +
 										window.location.host +
@@ -416,13 +412,13 @@ describe('Branch', function() {
 				var branch = initBranch(false);
 				branch.init(branch_sample_key);
 
-				requests[0].callback(null, browser_fingerprint_id);
+				requests[0].callback(null, randomized_device_token);
 				requests[1].callback(
 					null,
 					{
 						session_id: session_id,
-						browser_fingerprint_id: browser_fingerprint_id,
-						identity_id: identity_id,
+						randomized_device_token: randomized_device_token,
+						randomized_bundle_token: randomized_bundle_token,
 						data: JSON.stringify({
 							'$desktop_url': window.location.protocol + "//" +
 											window.location.host +
@@ -434,13 +430,13 @@ describe('Branch', function() {
 				branch = initBranch(false, true);
 				branch.init(branch_sample_key);
 
-				requests[3].callback(null, browser_fingerprint_id);
+				requests[3].callback(null, randomized_device_token);
 				requests[4].callback(
 					null,
 					{
 						session_id: session_id,
-						browser_fingerprint_id: browser_fingerprint_id,
-						identity_id: identity_id,
+						randomized_device_token: randomized_device_token,
+						randomized_bundle_token: randomized_bundle_token,
 						data: JSON.stringify({
 							'$desktop_url': window.location.protocol + "//" +
 											window.location.host +
@@ -500,8 +496,7 @@ describe('Branch', function() {
 					"branch_key": branch_sample_key,
 					"link_identifier": undefined,
 					"initial_referrer": requests[0].obj.initial_referrer,
-					"browser_fingerprint_id": undefined,
-					"alternative_browser_fingerprint_id": undefined,
+					"randomized_device_token": undefined,
 					"sdk": "connected" + config.version,
 					"options": { },
 					"current_url": utils.getCurrentUrl(),
@@ -528,8 +523,8 @@ describe('Branch', function() {
 				null,
 				{
 					session_id: session_id,
-					browser_fingerprint_id: undefined,
-					identity_id: identity_id,
+					randomized_device_token: undefined,
+					randomized_bundle_token: randomized_bundle_token,
 					data: JSON.stringify({
 						'$desktop_url': window.location.protocol + "//" +
 										window.location.host +
@@ -588,7 +583,7 @@ describe('Branch', function() {
 				[ "_t" ]
 			);
 			var expectedResponse = {
-				identity_id: '12345',
+				randomized_bundle_token: '12345',
 				link: 'url',
 				referring_data: '{ }',
 				referring_identity: '12345'
@@ -606,15 +601,15 @@ describe('Branch', function() {
 			assert.deepEqual(requests[0].obj, expectedRequest, 'All params sent');
 		});
 
-		it('should update identity and identity_id in local storage', function(done) {
+		it('should update identity and randomized_bundle_token in local storage', function(done) {
 			var branch = initBranch(true);
 			var assert = testUtils.plan(2, done);
 			branch.setIdentity('12345678', function(err, data) {
 				var localData = safejson.parse(localStorage.getItem('branch_session_first'));
 				assert.strictEqual(localData['identity'], '12345678');
-				assert.strictEqual(localData['identity_id'], '7654321');
+				assert.strictEqual(localData['randomized_bundle_token'], '7654321');
 			});
-			requests[0].callback(null, { identity: '12345678', identity_id: '7654321' });
+			requests[0].callback(null, { identity: '12345678', randomized_bundle_token: '7654321' });
 		});
 	});
 
@@ -657,11 +652,11 @@ describe('Branch', function() {
 				},
 				"branch_key": branch_sample_key,
 				"session_id": session_id,
-				"browser_fingerprint_id": browser_fingerprint_id,
+				"randomized_device_token": randomized_device_token,
 				"sdk": "connected" + config.version,
 				"initial_referrer": requests[0].obj.initial_referrer
 			};
-			expectedRequest.identity_id = identity_id;
+			expectedRequest.randomized_bundle_token = randomized_bundle_token;
 
 			assert.strictEqual(requests.length, 1, 'Request made');
 			requests[0].callback(null);
@@ -688,11 +683,11 @@ describe('Branch', function() {
 				},
 				"branch_key": branch_sample_key,
 				"session_id": session_id,
-				"browser_fingerprint_id": browser_fingerprint_id,
+				"randomized_device_token": randomized_device_token,
 				"sdk": "connected" + config.version,
 				"initial_referrer": requests[0].obj.initial_referrer
 			};
-			expectedRequest.identity_id = identity_id;
+			expectedRequest.randomized_bundle_token = randomized_bundle_token;
 
 			assert.strictEqual(requests.length, 1, 'Request made');
 			requests[0].callback(null);
@@ -720,7 +715,7 @@ describe('Branch', function() {
 		});
 
 		it(
-			'should overwrite existing session_id, sessionLink, and identity_id\'s',
+			'should overwrite existing session_id, sessionLink, and randomized_bundle_token\'s',
 			function(done) {
 				var branch = initBranch(true);
 				var assert = testUtils.plan(6, done);
@@ -737,7 +732,7 @@ describe('Branch', function() {
 				requests[0].callback(
 					null,
 					{
-						"identity_id": newIdentityId,
+						"randomized_bundle_token": newIdentityId,
 						"session_id": newSessionId,
 						"link": newLink
 					}
@@ -749,7 +744,7 @@ describe('Branch', function() {
 				);
 				assert.strictEqual(branch.session_id, newSessionId, 'branch session was replaced');
 				assert.strictEqual(
-					branch.identity_id,
+					branch.randomized_bundle_token,
 					newIdentityId,
 					'branch identity was replaced'
 				);
@@ -796,7 +791,7 @@ describe('Branch', function() {
 			"url": "https://bnc.lt/l/3HZMytU-BW"
 		};
 
-		it('should call api with serialized data and return link with browser_fingerprint_id appended', function(done) {
+		it('should call api with serialized data and return link with randomized_device_token appended', function(done) {
 			var branch = initBranch(true);
 			var assert = testUtils.plan(4, done);
 			branch.link(expectedRequest(), function(err, link) {
@@ -910,7 +905,7 @@ describe('Branch', function() {
 			branch.init(branch_sample_key, function(err, data) {
 				assert.strictEqual(err, null, 'No error');
 			});
-			requests[0].callback(null, browser_fingerprint_id);
+			requests[0].callback(null, randomized_device_token);
 			requests[1].callback(
 				null,
 				{
@@ -928,7 +923,7 @@ describe('Branch', function() {
 			assert.strictEqual("{}", localStorage.getItem('branch_session_first'), 'Cookie not stored. [This may not work in some browsers with a file: URL, e.g. Chrome.]');
 
 			branch.disableTracking(false);
-			requests[3].callback(null, browser_fingerprint_id);
+			requests[3].callback(null, randomized_device_token);
 			requests[4].callback(
 				null,
 				{

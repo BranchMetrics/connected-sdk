@@ -164,10 +164,10 @@ Branch.prototype._api = function(resource, obj, callback) {
 			this.session_id) {
 		obj['session_id'] = this.session_id;
 	}
-	if (((resource.params && resource.params['identity_id']) ||
-			(resource.queryPart && resource.queryPart['identity_id'])) &&
-			this.identity_id) {
-		obj['identity_id'] = this.identity_id;
+	if (((resource.params && resource.params['randomized_bundle_token']) ||
+			(resource.queryPart && resource.queryPart['randomized_bundle_token'])) &&
+			this.randomized_bundle_token) {
+		obj['randomized_bundle_token'] = this.randomized_bundle_token;
 	}
 
 	if (resource.endpoint.indexOf("/v1/") < 0) {
@@ -196,10 +196,10 @@ Branch.prototype._api = function(resource, obj, callback) {
 		obj['sdk_version'] = this.sdk_version;
 	}
 
-	if (((resource.params && resource.params['browser_fingerprint_id']) ||
-			(resource.queryPart && resource.queryPart['browser_fingerprint_id'])) &&
-			this.browser_fingerprint_id) {
-		obj['browser_fingerprint_id'] = this.browser_fingerprint_id;
+	if (((resource.params && resource.params['randomized_device_token']) ||
+			(resource.queryPart && resource.queryPart['randomized_device_token'])) &&
+			this.randomized_device_token) {
+		obj['randomized_device_token'] = this.randomized_device_token;
 	}
 	// Adds tracking_disabled to every post request when enabled
 	if (utils.userPreferences.trackingDisabled) {
@@ -330,12 +330,12 @@ Branch.prototype['init'] = wrap(
 			utils.cleanApplicationAndSessionStorage(self);
 		}
 
-		self.advertising_ids = options && options['advertising_ids'] && utils.validateParameterType(options['advertising_ids'], "object") && utils.validateAdvertiserIDs(options['advertising_ids']) ? options['advertising_ids'] : {};
+		self.advertising_ids = options && options['advertising_ids'] && utils.validateParameterType(options['advertising_ids'], "object") && utils.validateAdvertiserIDs(options['advertising_ids']) ? options['advertising_ids'] : null;
 
-		// initialize identity_id from storage
+		// initialize randomized_bundle_token from storage
 		// note the previous line scrubs this if tracking disabled.
 		var localData = session.get(self._storage, true);
-		self.identity_id = localData && localData['identity_id'];
+		self.randomized_bundle_token = localData && localData['randomized_bundle_token'];
 
 		var setBranchValues = function(data) {
 			if (data['link_click_id']) {
@@ -344,8 +344,8 @@ Branch.prototype['init'] = wrap(
 			if (data['session_id']) {
 				self.session_id = data['session_id'].toString();
 			}
-			if (data['identity_id']) {
-				self.identity_id = data['identity_id'].toString();
+			if (data['randomized_bundle_token']) {
+				self.randomized_bundle_token = data['randomized_bundle_token'].toString();
 			}
 			if (data['identity']) {
 				self.identity = data['identity'].toString();
@@ -360,7 +360,7 @@ Branch.prototype['init'] = wrap(
 				data['click_id'] = utils.getClickIdAndSearchStringFromLink(data['referring_link']);
 			}
 
-			self.browser_fingerprint_id = data['browser_fingerprint_id'];
+			self.randomized_device_token = data['randomized_device_token'];
 
 			return data;
 		};
@@ -371,25 +371,25 @@ Branch.prototype['init'] = wrap(
 			options['branch_match_id'] :
 			null;
 		var link_identifier = (branchMatchIdFromOptions || utils.getParamValue('_branch_match_id') || utils.hashValue('r'));
-		var freshInstall = !self.identity_id; // initialized from local storage above
+		var freshInstall = !self.randomized_bundle_token; // initialized from local storage above
 		self._branchViewEnabled = !!self._storage.get('branch_view_enabled');
 		var call_r = function(cb) {
 			var params_r = { "sdk": config.version, "branch_key": self.branch_key };
 			var currentSessionData = session.get(self._storage) || {};
 			var permData = session.get(self._storage, true) || {};
-			if (permData['browser_fingerprint_id']) {
-				params_r['_t'] = permData['browser_fingerprint_id'];
+			if (permData['randomized_device_token']) {
+				params_r['_t'] = permData['randomized_device_token'];
 			}
 			self._api(
 				resources._r,
 				params_r,
-				function(err, browser_fingerprint_id) {
+				function(err, randomized_device_token) {
 					if (err) {
 						self.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND;
 						self.init_state_fail_details = err.message;
 					}
-					if (browser_fingerprint_id) {
-						currentSessionData['browser_fingerprint_id'] = browser_fingerprint_id;
+					if (randomized_device_token) {
+						currentSessionData['randomized_device_token'] = randomized_device_token;
 						if (cb) {
 							cb(null, currentSessionData);
 						}
@@ -398,6 +398,36 @@ Branch.prototype['init'] = wrap(
 			);
 		};
 
+		var call_open = function(err, data) {
+			var open_delay = parseInt(utils.getParamValue('[?&]_open_delay_ms'), 10);
+			utils.delay(function() {
+				self._api(
+					resources.open,
+					{
+						"link_identifier": link_identifier,
+						"randomized_device_token": data['randomized_device_token'],
+						"options": options,
+						"advertising_ids": self.advertising_ids,
+						"initial_referrer": utils.getInitialReferrer(self._referringLink()),
+						"current_url": utils.getCurrentUrl(),
+						"screen_height": utils.getScreenHeight(),
+						"screen_width": utils.getScreenWidth()
+					},
+					function(err, data) {
+						if (err) {
+							self.init_state_fail_code = init_state_fail_codes.OPEN_FAILED;
+							self.init_state_fail_details = err.message;
+						}
+						if (!err && typeof data === 'object') {
+							if (link_identifier) {
+								data['click_id'] = link_identifier;
+							}
+						}
+						finishInit(err, data);
+					}
+				);
+			}, open_delay);
+		};
 		var restoreIdentityOnInstall = function(data) {
 			if (freshInstall) {
 				data["identity"] = self.identity;
@@ -476,10 +506,7 @@ Branch.prototype['init'] = wrap(
 					self.changeEventListenerAdded = true;
 					document.addEventListener(changeEvent, function() {
 						if (!document[hidden]) {
-							call_r(null);
-							if (typeof self._deepviewRequestForReplay === 'function') {
-								self._deepviewRequestForReplay();
-							}
+							call_r(call_open);
 						}
 					}, false);
 				}
@@ -497,8 +524,8 @@ Branch.prototype['init'] = wrap(
 		var params_r = { "sdk": config.version, "branch_key": self.branch_key };
 		var permData = session.get(self._storage, true) || {};
 
-		if (permData['browser_fingerprint_id']) {
-			params_r['_t'] = permData['browser_fingerprint_id'];
+		if (permData['randomized_device_token']) {
+			params_r['_t'] = permData['randomized_device_token'];
 		}
 
 		if (permData['identity']) {
@@ -510,7 +537,7 @@ Branch.prototype['init'] = wrap(
 		self._api(
 			resources._r,
 			params_r,
-			function(err, browser_fingerprint_id) {
+			function(err, randomized_device_token) {
 				if (err) {
 					self.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND;
 					self.init_state_fail_details = err.message;
@@ -521,8 +548,7 @@ Branch.prototype['init'] = wrap(
 						resources.open,
 						{
 							"link_identifier": link_identifier,
-							"browser_fingerprint_id": link_identifier || browser_fingerprint_id,
-							"alternative_browser_fingerprint_id": permData['browser_fingerprint_id'],
+							"randomized_device_token": randomized_device_token,
 							"options": options,
 							"advertising_ids": self.advertising_ids,
 							"initial_referrer": utils.getInitialReferrer(self._referringLink()),
@@ -655,7 +681,7 @@ Branch.prototype['first'] = wrap(callback_params.CALLBACK_ERR_DATA, function(don
  * callback(
  *      "Error message",
  *      {
- *           identity_id:             '12345', // Server-generated ID of the user identity, stored in `sessionStorage`.
+ *           randomized_bundle_token:             '12345', // Server-generated ID of the user identity, stored in `sessionStorage`.
  *           link:                    'url',   // New link to use (replaces old stored link), stored in `sessionStorage`.
  *           referring_data_parsed:    { },      // Returns the initial referring data for this identity, if exists, as a parsed object.
  *           referring_identity:      '12345'  // Returns the initial referring identity for this identity, if exists.
@@ -678,7 +704,7 @@ Branch.prototype['setIdentity'] = wrap(callback_params.CALLBACK_ERR_DATA, functi
 			}
 
 			data = data || { };
-			self.identity_id = data['identity_id'] ? data['identity_id'].toString() : null;
+			self.randomized_bundle_token = data['randomized_bundle_token'] ? data['randomized_bundle_token'].toString() : null;
 			self.sessionLink = data['link'];
 
 			self.identity = identity;
@@ -688,8 +714,8 @@ Branch.prototype['setIdentity'] = wrap(callback_params.CALLBACK_ERR_DATA, functi
 				safejson.parse(data['referring_data']) :
 				null;
 
-			// /v1/profile will return a new identity_id, but the same session_id
-			session.patch(self._storage, { "identity": identity, "identity_id": self.identity_id }, true);
+			// /v1/profile will return a new randomized_bundle_token, but the same session_id
+			session.patch(self._storage, { "identity": identity, "randomized_bundle_token": self.randomized_bundle_token }, true);
 			done(null, data);
 		}
 	);
@@ -734,15 +760,15 @@ Branch.prototype['logout'] = wrap(callback_params.CALLBACK_ERR, function(done) {
 			"link_click_id": null,
 			"identity": null, // data.identity is usually/always null anyway, but force it here
 			"session_id": data['session_id'],
-			"identity_id": data['identity_id'],
+			"randomized_bundle_token": data['randomized_bundle_token'],
 			"link": data['link'],
 			"device_fingerprint_id": self.device_fingerprint_id || null
 		};
 
-		// /v1/logout will return a new identity_id and a new session_id
+		// /v1/logout will return a new randomized_bundle_token and a new session_id
 		self.sessionLink = data['link'];
 		self.session_id = data['session_id'];
-		self.identity_id = data['identity_id'];
+		self.randomized_bundle_token = data['randomized_bundle_token'];
 		self.identity = null;
 		// make sure to update both session and local. removeNull = true deletes, in particular,
 		// identity instead of inserting null in storage.
@@ -754,7 +780,7 @@ Branch.prototype['logout'] = wrap(callback_params.CALLBACK_ERR, function(done) {
 
 Branch.prototype['getBrowserFingerprintId'] = wrap(callback_params.CALLBACK_ERR_DATA, function(done) {
 	var permData = session.get(this._storage, true) || {};
-	done(null, permData['browser_fingerprint_id'] || null);
+	done(null, permData['randomized_device_token'] || null);
 });
 
 /**
@@ -816,56 +842,6 @@ Branch.prototype['lastAttributedTouchData'] = wrap(callback_params.CALLBACK_ERR_
 			return done(err || null, data || null);
 		}
 	);
-});
-
-/**
- * @function Branch.track
- * @param {string} event - _required_ - name of the event to be tracked.
- * @param {Object=} metadata - _optional_ - object of event metadata.
- * @param {function(?Error)=} callback - _optional_
- *
- * This function allows you to track any event with supporting metadata.
- * The `metadata` parameter is a formatted JSON object that can contain
- * any data and has limitless hierarchy
- *
- * ##### Usage
- * ```js
- * branch.track(
- *     event,
- *     metadata,
- *     callback (err)
- * );
- * ```
- *
- * ##### Callback Format
- * ```js
- * callback("Error message");
- * ```
- * ___
- */
-/*** +TOC_HEADING &Event Tracking& ^ALL ***/
-/*** +TOC_ITEM #trackevent-metadata-callback &.track()& ^ALL ***/
-Branch.prototype['track'] = wrap(callback_params.CALLBACK_ERR, function(done, event, metadata, options) {
-	var self = this;
-
-	metadata = metadata || {};
-
-	options = options || {};
-
-	utils.nonce = options['nonce'] ? options['nonce'] : utils.nonce;
-	self._api(resources.event, {
-		"event": event,
-		"metadata": utils.merge({
-			"url": utils.getWindowLocation(),
-			"user_agent": navigator.userAgent,
-			"language": navigator.language
-		}, metadata),
-		"initial_referrer": utils.getInitialReferrer(self._referringLink())
-	}, function(err, data) {
-		if (typeof done === 'function') {
-			done.apply(this, arguments);
-		}
-	});
 });
 
 /**
@@ -1267,84 +1243,6 @@ Branch.prototype['setBranchViewData'] = wrap(callback_params.CALLBACK_ERR, funct
 	_setBranchViewData.call(null, this, done, data);
 }, /* allowed before init */ true);
 
-/**
- * @function Branch.trackCommerceEvent
- * @param {String} event - _required_ - Name of the commerce event to be tracked. We currently support 'purchase' events
- * @param {Object} commerce_data - _required_ - Data that describes the commerce event
- * @param {Object} metadata - _optional_ - metadata you may want add to the event
- * @param {function(?Error)=} callback - _optional_ - Returns an error if unsuccessful
- *
- * Sends a user commerce event to the server
- *
- * Use commerce events to track when a user purchases an item in your online store,
- * makes an in-app purchase, or buys a subscription. The commerce events are tracked in
- * the Branch dashboard along with your other events so you can judge the effectiveness of
- * campaigns and other analytics.
- *
- * ##### Usage
- *
- * ```js
- * branch.trackCommerceEvent(
- *     event,
- *     commerce_data,
- *     metadata,
- *     callback (err)
- * );
- * ```
- *
- * ##### Example
- *
- * ```js
- * var commerce_data = {
- *     "revenue": 50.0,
- *     "currency": "USD",
- *     "transaction_id": "foo-transaction-id",
- *     "shipping": 0.0,
- *     "tax": 5.0,
- *     "affiliation": "foo-affiliation",
- *     "products": [
- *          { "sku": "foo-sku-1", "name": "foo-item-1", "price": 45.00, "quantity": 1, "brand": "foo-brand",
- *            "category": "Electronics", "variant": "foo-variant-1"},
- *          { "sku": "foo-sku-2", "price": 2.50, "quantity": 2}
- *      ],
- * };
- *
- * var metadata =  { "foo": "bar" };
- *
- * branch.trackCommerceEvent('purchase', commerce_data, metadata, function(err) {
- *     if(err) {
- *          throw err;
- *     }
- * });
- * ```
- * ___
- */
-/*** +TOC_HEADING &Revenue Analytics& ^WEB ***/
-/*** +TOC_ITEM #trackcommerceeventevent-commerce_data-metadata-callback &.trackCommerceEvent()& ^WEB ***/
-Branch.prototype['trackCommerceEvent'] = wrap(callback_params.CALLBACK_ERR, function(done, event, commerce_data, metadata) {
-	var self = this;
-	self['renderQueue'](function() {
-
-		var validationError = utils.validateCommerceEventParams(event, commerce_data);
-		if (validationError) {
-			return done(new Error(validationError));
-		}
-
-		self._api(resources.commerceEvent, {
-			"event": event,
-			"metadata": utils.merge({
-				"url": document.URL,
-				"user_agent": navigator.userAgent,
-				"language": navigator.language
-			}, metadata || {}),
-			"initial_referrer": utils.getInitialReferrer(self._referringLink()),
-			"commerce_data": commerce_data
-		}, function(err, data) {
-			done(err || null);
-		});
-	});
-	done();
-});
 
 /**
  * @function Branch.disableTracking

@@ -148,15 +148,11 @@
 		}
 	}
 
-	if (resource.endpoint === '/v1/event') {
-		d['metadata'] = safejson.stringify(d['metadata'] || {});
-		if (d.hasOwnProperty('commerce_data')) {
-			d['commerce_data'] = safejson.stringify(d['commerce_data'] || {});
-		}
-	}
-
 	if (resource.endpoint === '/v1/open') {
 		d['options'] = safejson.stringify(d['options'] || {});
+		if (d['advertising_ids']) {
+			d['advertising_ids'] = safejson.stringify(utils.convertObjectValuesToString(d['advertising_ids'] || {}));
+		}
 	}
 
 	return {
@@ -358,7 +354,7 @@
 
 	// Removes PII from request data in case fields flow in from cascading requests
 	if (utils.userPreferences.trackingDisabled) {
-		var PII = [ 'browser_fingerprint_id', 'alternative_browser_fingerprint_id', 'identity_id', 'session_id', 'identity' ];
+		var PII = [ 'randomized_device_token', 'randomized_bundle_token', 'session_id', 'identity' ];
 		for (var index = 0; index < PII.length; index++) {
 			if (data.hasOwnProperty(PII[index])) {
 				delete data[PII[index]];
