@@ -40,8 +40,6 @@
 		'logout',
 		'setBranchViewData',
 		'setIdentity',
-		'track',
-		'trackCommerceEvent',
 		'logEvent',
 		'disableTracking',
 		'getBrowserFingerprintId',

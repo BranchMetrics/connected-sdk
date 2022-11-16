@@ -136,9 +136,9 @@ utils.cleanApplicationAndSessionStorage = function(branch) {
 		branch.device_fingerprint_id = null;
 		branch.sessionLink = null;
 		branch.session_id = null;
-		branch.identity_id = null;
+		branch.randomized_bundle_token = null;
 		branch.identity = null;
-		branch.browser_fingerprint_id = null;
+		branch.randomized_device_token = null;
 		branch._storage.remove('branch_view_enabled');
 		var data = {};
 		// Sets an empty object for branch_session and branch_session_first in local/sessionStorage
@@ -647,13 +647,9 @@ utils.isBase64Encoded = function(str) {
  * @param {Object} data
  */
 utils.encodeBFPs = function(data) {
-	if (data && data["browser_fingerprint_id"] &&
-		!utils.isBase64Encoded(data["browser_fingerprint_id"])) {
-		data["browser_fingerprint_id"] = btoa(data["browser_fingerprint_id"]);
-	}
-	if (data && data["alternative_browser_fingerprint_id"] &&
-		!utils.isBase64Encoded(data["alternative_browser_fingerprint_id"])) {
-		data["alternative_browser_fingerprint_id"] = btoa(data["alternative_browser_fingerprint_id"]);
+	if (data && data["randomized_device_token"] &&
+		!utils.isBase64Encoded(data["randomized_device_token"])) {
+		data["randomized_device_token"] = btoa(data["randomized_device_token"]);
 	}
 	return data;
 };
@@ -664,11 +660,8 @@ utils.encodeBFPs = function(data) {
  * @param {Object} data
  */
 utils.decodeBFPs = function(data) {
-	if (data && utils.isBase64Encoded(data["browser_fingerprint_id"])) {
-		data["browser_fingerprint_id"] = atob(data["browser_fingerprint_id"]);
-	}
-	if (data && utils.isBase64Encoded(data["alternative_browser_fingerprint_id"])) {
-		data["alternative_browser_fingerprint_id"] = atob(data["alternative_browser_fingerprint_id"]);
+	if (data && utils.isBase64Encoded(data["randomized_device_token"])) {
+		data["randomized_device_token"] = atob(data["randomized_device_token"]);
 	}
 	return data;
 };
@@ -899,78 +892,6 @@ utils.calculateDiffBetweenArrays = function(original, toCheck) {
 	return diff;
 };
 
-var validCommerceEvents = [ 'purchase' ];
-
-var commerceEventMessages = {
-	'missingPurchaseEvent': 'event name is either missing, of the wrong type or not valid. Please specify \'purchase\' as the event name.',
-	'missingCommerceData': 'commerce_data is either missing, of the wrong type or empty. Please ensure that commerce_data is constructed correctly.',
-	'invalidKeysForRoot': 'Please remove the following keys from the root of commerce_data: ',
-	'invalidKeysForProducts': 'Please remove the following keys from commerce_data.products: ',
-	'invalidProductListType': 'commerce_data.products must be an array of objects',
-	'invalidProductType': 'Each product in the products list must be an object'
-};
-
-/**
- * Validates the commerce-data object passed into branch.trackCommerceEvent().
- * If there are invalid keys present then it will report back what those keys are.
- * Note: The keys below are optional.
- */
-var validateCommerceDataKeys = function(commerceData) {
-	var allowedInRoot = [ 'common', 'type', 'transaction_id', 'currency', 'revenue', 'revenue_in_usd', 'exchange_rate', 'shipping', 'tax', 'coupon', 'affiliation', 'persona', 'products' ];
-	var allowedInProducts = [ 'sku', 'name', 'price', 'quantity', 'brand', 'category', 'variant' ];
-
-	var invalidKeysInRoot = utils.calculateDiffBetweenArrays(allowedInRoot, Object.keys(commerceData));
-	if (invalidKeysInRoot.length) {
-		return commerceEventMessages['invalidKeysForRoot'] + invalidKeysInRoot.join(', ');
-	}
-
-	var invalidKeysForProducts = [];
-	var invalidProductType;
-	if (commerceData.hasOwnProperty('products')) {
-		// make sure products is an array
-		if (!Array.isArray(commerceData['products'])) {
-			return commerceEventMessages['invalidProductListType'];
-		}
-		commerceData['products'].forEach(function(product) {
-			// all product entries must be objects
-			if (typeof product !== 'object') {
-				invalidProductType = commerceEventMessages['invalidProductType'];
-			}
-			invalidKeysForProducts = invalidKeysForProducts.concat(utils.calculateDiffBetweenArrays(allowedInProducts, Object.keys(product)));
-		});
-
-		if (invalidProductType) {
-			return invalidProductType;
-		}
-
-		if (invalidKeysForProducts.length) {
-			return commerceEventMessages['invalidKeysForProducts'] + invalidKeysForProducts.join(', ');
-		}
-	}
-
-	return null;
-};
-
-/**
- * Returns an error message if the partner passes in an invalid event or commerce_data to branch.trackCommerceEvent()
- */
-utils.validateCommerceEventParams = function(event, commerce_data) {
-	if (!event || typeof event !== 'string' || validCommerceEvents.indexOf(event.toLowerCase()) === -1) {
-		return commerceEventMessages['missingPurchaseEvent'];
-	}
-
-	if (!commerce_data || typeof commerce_data !== 'object' || Object.keys(commerce_data || {}).length === 0) {
-		return commerceEventMessages['missingCommerceData'];
-	}
-
-	var invalidKeysMessage = validateCommerceDataKeys(commerce_data);
-	if (invalidKeysMessage) {
-		return invalidKeysMessage;
-	}
-
-	return null;
-};
-
 utils.getTitle = function() {
 	var tags = document.getElementsByTagName('title');
 	return tags.length > 0 ? tags[0].innerText : null;
@@ -1076,7 +997,7 @@ utils.getScreenWidth = function() {
 };
 
 // Used by logEvent() to send fields related to user's visit and device to v2/event standard and custom
-// Requires a reference to the branch object to access information such as browser_fingerprint_id
+// Requires a reference to the branch object to access information such as randomized_device_token
 utils.getUserData = function(branch) {
 	var user_data = {};
 	user_data = utils.addPropertyIfNotNull(user_data, "http_origin", document.URL);
@@ -1085,7 +1006,7 @@ utils.getUserData = function(branch) {
 	user_data = utils.addPropertyIfNotNull(user_data, "screen_width", utils.getScreenWidth());
 	user_data = utils.addPropertyIfNotNull(user_data, "screen_height", utils.getScreenHeight());
 	user_data = utils.addPropertyIfNotNull(user_data, "http_referrer", document.referrer);
-	user_data = utils.addPropertyIfNotNull(user_data, "browser_fingerprint_id", branch.browser_fingerprint_id);
+	user_data = utils.addPropertyIfNotNull(user_data, "randomized_device_token", branch.randomized_device_token);
 	user_data = utils.addPropertyIfNotNull(user_data, "developer_identity", branch.identity);
 	user_data = utils.addPropertyIfNotNull(user_data, "identity", branch.identity);
 	user_data = utils.addPropertyIfNotNull(user_data, "sdk", config.sdk);

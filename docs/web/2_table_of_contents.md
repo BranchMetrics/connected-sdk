@@ -8,16 +8,12 @@
   + [.lastAttributedTouchData()](#lastAttributedTouchDataattribution_window-callback)
 
 2. Event Tracking
-  + [.track()](#trackevent-metadata-callback)
   + [.logEvent()](#logeventevent-event_data_and_custom_data-content_items-callback)
 
 3. Deep Linking
   + [.link()](#linkdata-callback)
 
-7. Revenue Analytics
-  + [.trackCommerceEvent()](#trackcommerceeventevent-commerce_data-metadata-callback)
-
-8. User Privacy
+4. User Privacy
   + [.disableTracking()](#disabletrackingdisabletracking)
 
 ___

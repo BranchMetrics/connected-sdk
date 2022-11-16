@@ -82,8 +82,8 @@ function validator(required, type) {
 
 function defaults(obj) {
 	var def = {
-		"browser_fingerprint_id": validator(true, validationTypes.STRING),
-		"identity_id": validator(true, validationTypes.STRING),
+		"randomized_device_token": validator(true, validationTypes.STRING),
+		"randomized_bundle_token": validator(true, validationTypes.STRING),
 		"sdk": validator(true, validationTypes.STRING),
 		"sdk_version": validator(true, validationTypes.STRING),
 		"session_id": validator(true, validationTypes.STRING)
@@ -93,7 +93,7 @@ function defaults(obj) {
 
 function v2defaults(obj) {
 	var def = {
-		"user_data": validator(true, validationTypes.OBJECT)
+		"user_data": validator(true, validationTypes.STRING)
 	};
 	return utils.merge(obj, def);
 }
@@ -103,9 +103,8 @@ resources.open = {
 	endpoint: "/v1/open",
 	method: utils.httpMethod.POST,
 	params: {
-		"browser_fingerprint_id": validator(false, validationTypes.STRING),
-		"alternative_browser_fingerprint_id": validator(false, validationTypes.STRING),
-		"identity_id": validator(false, validationTypes.STRING),
+		"randomized_device_token": validator(false, validationTypes.STRING),
+		"randomized_bundle_token": validator(false, validationTypes.STRING),
 		"link_identifier": validator(false, validationTypes.STRING),
 		"sdk": validator(false, validationTypes.STRING),
 		"options": validator(false, validationTypes.OBJECT),
@@ -114,7 +113,8 @@ resources.open = {
 		"current_url": validator(false, validationTypes.STRING),
 		"screen_height": validator(false, validationTypes.NUMBER),
 		"screen_width": validator(false, validationTypes.NUMBER),
-		"sdk_version": validator(false, validationTypes.STRING)
+		"sdk_version": validator(false, validationTypes.STRING),
+		"advertising_ids": validator(false, validationTypes.OBJECT)
 	}
 };
 
@@ -157,7 +157,7 @@ resources.profile = {
 	endpoint: "/v1/profile",
 	method: utils.httpMethod.POST,
 	params: defaults({
-		"identity_id": validator(true, validationTypes.STRING),
+		"randomized_bundle_token": validator(true, validationTypes.STRING),
 		"identity": validator(true, validationTypes.STRING)
 	})
 };
@@ -173,7 +173,7 @@ resources.link = {
 		"channel": validator(false, validationTypes.STRING),
 		"data": validator(false, validationTypes.STRING),
 		"feature": validator(false, validationTypes.STRING),
-		"identity_id": validator(true, validationTypes.STRING),
+		"randomized_bundle_token": validator(true, validationTypes.STRING),
 		"stage": validator(false, validationTypes.STRING),
 		"tags": validator(false, validationTypes.ARRAY),
 		"type": validator(false, validationTypes.NUMBER),
@@ -194,35 +194,11 @@ resources.qrCode = {
 		"data": validator(false, validationTypes.STRING),
 		"qr_code_settings": validator(false, validationTypes.STRING),
 		"feature": validator(false, validationTypes.STRING),
-		"identity_id": validator(true, validationTypes.STRING),
+		"randomized_bundle_token": validator(true, validationTypes.STRING),
 		"stage": validator(false, validationTypes.STRING),
 		"tags": validator(false, validationTypes.ARRAY),
 		"type": validator(false, validationTypes.NUMBER),
 		"source": validator(false, validationTypes.STRING)
-	})
-};
-
-resources.event = {
-	destination: config.api_endpoint,
-	endpoint: "/v1/event",
-	method: utils.httpMethod.POST,
-	params: defaults({
-		"event": validator(true, validationTypes.STRING),
-		"metadata": validator(true, validationTypes.OBJECT),
-		"initial_referrer": validator(false, validationTypes.STRING),
-		"tracking_disabled": validator(false, validationTypes.BOOLEAN)
-	})
-};
-
-resources.commerceEvent = {
-	destination: config.api_endpoint,
-	endpoint: "/v1/event",
-	method: utils.httpMethod.POST,
-	params: defaults({
-		"event": validator(true, validationTypes.STRING),
-		"metadata": validator(false, validationTypes.OBJECT),
-		"initial_referrer": validator(false, validationTypes.STRING),
-		"commerce_data": validator(true, validationTypes.OBJECT)
 	})
 };
 
