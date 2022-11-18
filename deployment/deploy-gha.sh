@@ -21,12 +21,5 @@ NC='\033[0m'
   echo -en "${GREEN}make release ...${NC}\n"
   make release
 
-  echo -en "${GREEN}Pushing to S3: branch-builds/connected-sdk/ ...${NC}\n"
-  aws s3 cp --content-type="text/javascript" --content-encoding="gzip" dist/build.min.js.gz s3://branch-builds/connected-sdk/branch-$VERSION.min.js --acl public-read
-  aws s3 cp --content-type="text/javascript" --content-encoding="gzip" dist/build.min.js.gz s3://branch-builds/connected-sdk/branch-latest.min.js --acl public-read
-  aws s3 cp --content-type="text/javascript" dist/build.js s3://branch-builds/connected-sdk/branch.js --acl public-read
-  aws s3 cp example.html s3://branch-builds/connected-sdk/example.html --acl public-read
-
-
 # Exit prompts
-echo -en "${GREEN}Done deploy script ...${NC}\n"
+echo -en "${GREEN}Done make ...${NC}\n"
