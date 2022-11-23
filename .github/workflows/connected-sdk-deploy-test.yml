@@ -92,3 +92,4 @@ jobs:
 
       - name: Print RC branch
         run: echo ${{ steps.get-next-version.outputs.result }}
+        
