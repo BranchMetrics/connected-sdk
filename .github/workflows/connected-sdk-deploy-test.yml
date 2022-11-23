@@ -67,22 +67,6 @@ jobs:
          ref: master
          path: .branch-github-actions
          token: ${{ secrets.BRANCHLET_ACCESS_TOKEN }}
-      - name: Determine next version
-        id: get-next-version
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.BRANCHLET_ACCESS_TOKEN }}
-          result-encoding: string
-          script: |
-            const getNextVersion = require('./branch-github-actions/custom-scripts/next-version');
-            const nextVersion = await getNextVersion({
-              core,
-              github,
-              context,
-              sha: 'main',
-            });
-            console.log(`Next version is ${nextVersion}`);
-            return nextVersion;
       - name: Create RC branch
         id: create-rc
         uses: ./branch-github-actions/actions/create-rc
