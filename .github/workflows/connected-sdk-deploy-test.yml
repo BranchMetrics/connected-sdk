@@ -84,11 +84,3 @@ jobs:
          ref: master
          path: .branch-github-actions
          token: ${{ secrets.BRANCHLET_ACCESS_TOKEN }}
-      - name: Create RC branch
-        id: create-rc
-        uses: ./branch-github-actions/actions/create-rc
-        with:
-          version: ${{ steps.get-next-version.outputs.result }}
-
-      - name: Print RC branch
-        run: echo ${{ steps.get-next-version.outputs.result }}
