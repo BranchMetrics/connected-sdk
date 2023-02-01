@@ -38,7 +38,6 @@
 		'init',
 		'link',
 		'logout',
-		'setBranchViewData',
 		'setIdentity',
 		'logEvent',
 		'disableTracking',
