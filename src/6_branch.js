@@ -1191,59 +1191,6 @@ Branch.prototype['qrCode'] = wrap(
 	}
 );
 
-Branch.prototype._windowRedirect = function(url) {
-	window.top.location = url;
-};
-
-
-/** =WEB
- * @function Branch.setBranchViewData
- * @param {Object} data - _required_ - object of all link data, same as Branch.link()
- *
- * This function lets you set the deep link data dynamically for a given mobile web Journey. For
- * example, if you design a full page interstitial, and want the deep link data to be custom for each
- * page, you'd need to use this function to dynamically set the deep link params on page load. Then,
- * any Journey loaded on that page will inherit these deep link params.
- *
- * #### Usage
- *
- * ```js
- * branch.setBranchViewData(
- *   data // Data for link, same as Branch.link()
- * );
- * ```
- *
- * ##### Example
- *
- * ```js
- * branch.setBranchViewData({
- *   tags: ['tag1', 'tag2'],
- *   data: {
- *     mydata: 'something',
- *     foo: 'bar',
- *     '$deeplink_path': 'open/item/1234'
- *   }
- * });
- * ```
- */
-/*** +TOC_HEADING &Journeys Web To App& ^WEB ***/
-/*** +TOC_ITEM #setbranchviewdatadata &.setBranchViewData()& ^WEB ***/
-function _setBranchViewData(context, done, data) {
-	data = data || {};
-	try {
-		context._branchViewData = safejson.parse(safejson.stringify(data));
-	}
-	finally {
-		context._branchViewData = context._branchViewData || {};
-	}
-	done();
-}
-
-Branch.prototype['setBranchViewData'] = wrap(callback_params.CALLBACK_ERR, function(done, data) {
-	_setBranchViewData.call(null, this, done, data);
-}, /* allowed before init */ true);
-
-
 /**
  * @function Branch.disableTracking
  * @param {Boolean} disableTracking - _optional_ - true disables tracking and false re-enables tracking.
