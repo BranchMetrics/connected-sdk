@@ -4,7 +4,7 @@
 	"description": "Branch Metrics Deep Linking Connected SDK",
 	"main": "dist/branch-connected.min.js",
 	"files": [
-		"dist/build.min.js"
+		"dist/branch-connected.min.js"
 	],
 	"precommit": [
 		"lint"
