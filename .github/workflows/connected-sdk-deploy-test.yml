@@ -82,18 +82,11 @@ jobs:
          AWS_REGION: 'us-west-1'   # optional: defaults to us-east-1
          SOURCE_DIR: 'dist'      # optional: defaults to entire repository
          DEST_DIR: 'connected-sdk'
-      - name: Invalidate CloudFront
-        uses: chetan/invalidate-cloudfront-action@v2
-        env:
-          DISTRIBUTION: ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION }}
-          PATHS: ${{ matrix.path }}
-          AWS_REGION: "us-west-1"
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Install branch-github-actions
-        uses: actions/checkout@v3
+      - id: publish
+        uses: JS-DevTools/npm-publish@v1
         with:
-         repository: BranchMetrics/branch-github-actions
-         ref: master
-         path: .branch-github-actions
-         token: ${{ secrets.BRANCHLET_ACCESS_TOKEN }}
+         token: ${{ secrets.NPM_TOKEN }}
+        
+      - if: steps.publish.outputs.type != 'none'
+        run: |
+         echo "Version changed: ${{ steps.publish.outputs.old-version }} => ${{ steps.publish.outputs.version }}"
