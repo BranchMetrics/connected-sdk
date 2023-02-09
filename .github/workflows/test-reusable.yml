@@ -12,3 +12,6 @@ jobs:
     steps:
       - name: Run tests
         run: echo "Branch name is ${{ inputs.config-path }}"
+        
+      - name: Try to fail
+        run: exit 1
