@@ -6,3 +6,9 @@ on:
       config-path:
         required: true
         type: string
+jobs:
+  build:
+    runs-on: [small]
+    steps:
+      - name: Run tests
+        run: echo "Branch name is ${{ inputs.config-path }}"
