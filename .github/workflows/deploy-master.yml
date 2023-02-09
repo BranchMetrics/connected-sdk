@@ -1,0 +1,126 @@
+name: Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      branch_name:
+          description: 'Name of the branch'
+          required: true
+          default: 'main'
+
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - production
+      - releases/**
+    paths-ignore:
+      - docs/**
+      - README.md
+env:
+  BRANCH_NAME: '${{ github.event.inputs.branch_name || github.head_ref || github.ref_name  }}'
+
+jobs:
+  checkout-install:
+    name: Checkout and Install dependencies
+    runs-on: small
+    steps:
+      - name: Echo working branch name
+        run: echo "Action is running on branch name : $BRANCH_NAME"
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Prepare Node version
+        run: echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -f2 -d' ')" >> $GITHUB_ENV
+
+      - name: Install Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+  test-unit:
+    name: Unit tests
+    needs: checkout-install
+    runs-on: small
+    steps:
+      - name: Echo working branch name
+        run: echo "Action is running on branch name : $BRANCH_NAME"
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Prepare Node version
+        run: echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -f2 -d' ')" >> $GITHUB_ENV
+
+      - name: Install Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: echo "Running tests"
+
+  test-lint:
+    name: Lint
+    needs: checkout-install
+    runs-on: small
+    steps:
+      - name: Echo working branch name
+        run: echo "Action is running on branch name : $BRANCH_NAME"
+
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Prepare Node version
+        run: echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -f2 -d' ')" >> $GITHUB_ENV
+
+      - name: Install Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint tests
+        run: npm run lint
+  build:
+    name: Build
+    needs: [test-lint, test-unit]
+    runs-on: small
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Prepare Node version
+        run: echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -f2 -d' ')" >> $GITHUB_ENV
+
+      - name: Install Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Call the deploy Bash Script
+        run:  bash ${GITHUB_WORKSPACE}/deployment/deploy-gha.sh
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: small
+    steps:
+      - name: Echo working branch name
+        run: echo "Action is running on branch name : $BRANCH_NAME"
+        
