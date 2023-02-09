@@ -18,20 +18,15 @@ on:
       - README.md
 env:
   BRANCH_NAME: '${{ github.event.inputs.branch_name || github.head_ref || github.ref_name  }}'
+  NODE_VERSION: 14.15.0
 
 jobs:
   checkout-install:
     name: Checkout and Install dependencies
     runs-on: small
     steps:
-      - name: Echo working branch name
-        run: echo "Action is running on branch name : $BRANCH_NAME"
-
       - name: Checkout repo
         uses: actions/checkout@v3
-
-      - name: Prepare Node version
-        run: echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -f2 -d' ')" >> $GITHUB_ENV
 
       - name: Install Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
@@ -47,14 +42,8 @@ jobs:
     needs: checkout-install
     runs-on: small
     steps:
-      - name: Echo working branch name
-        run: echo "Action is running on branch name : $BRANCH_NAME"
-
       - name: Checkout repo
         uses: actions/checkout@v3
-
-      - name: Prepare Node version
-        run: echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -f2 -d' ')" >> $GITHUB_ENV
 
       - name: Install Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
@@ -73,14 +62,8 @@ jobs:
     needs: checkout-install
     runs-on: small
     steps:
-      - name: Echo working branch name
-        run: echo "Action is running on branch name : $BRANCH_NAME"
-
       - name: Checkout repo
         uses: actions/checkout@v3
-
-      - name: Prepare Node version
-        run: echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -f2 -d' ')" >> $GITHUB_ENV
 
       - name: Install Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
@@ -101,9 +84,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Prepare Node version
-        run: echo "NODE_VERSION=$(grep nodejs .tool-versions | cut -f2 -d' ')" >> $GITHUB_ENV
-
       - name: Install Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
@@ -121,6 +101,6 @@ jobs:
     needs: build
     runs-on: small
     steps:
-      - name: Echo working branch name
-        run: echo "Action is running on branch name : $BRANCH_NAME"
+      - name: dummy deploy
+        run: echo "Branch name is $BRANCH_NAME"
         
