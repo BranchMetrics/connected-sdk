@@ -47,3 +47,7 @@ jobs:
         run: |
             echo "Version selected is, ${{ github.event.inputs.version }}!"
             echo "- qa ${{ inputs.perform_deploy_qa }}!"
+  call-workflow-passing-data:
+    uses: ./.github/workflows/test-reusable.yml
+    with:
+      config-path: $BRANCH_NAME
