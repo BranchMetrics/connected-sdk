@@ -18,7 +18,7 @@ on:
       - README.md
 env:
   BRANCH_NAME: '${{ github.event.inputs.branch_name || github.head_ref || github.ref_name  }}'
-  NODE_VERSION: 14.15.0
+  NODE_VERSION: 16
 
 jobs:
   checkout-install:
