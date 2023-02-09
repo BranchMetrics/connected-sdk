@@ -24,14 +24,7 @@ on:
            - major
            - minor
            - patch
-  push:
-    branches:
-      - main
-      - production
-      - releases/**
-    paths-ignore:
-      - docs/**
-      - README.md
+
   pull_request:
     types: [opened, reopened, edited]
     branches:
