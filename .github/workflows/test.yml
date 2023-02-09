@@ -33,7 +33,7 @@ on:
       - docs/**
       - README.md
   pull_request:
-    types: [opened, reopened, edited, closed]
+    types: [opened, reopened, edited]
     branches:
       - main
       - production
