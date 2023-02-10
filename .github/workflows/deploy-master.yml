@@ -110,8 +110,9 @@ jobs:
   deploy:
     name: Deploy
     needs: build
+    if: $BRANCH_NAME == 'master'
     runs-on: small
     steps:
       - name: dummy deploy
-        run: echo "Branch name is $BRANCH_NAME"
+        run: echo "PR merged in branch named $BRANCH_NAME"
         
