@@ -107,10 +107,10 @@ jobs:
       - name: Call the deploy Bash Script
         run:  bash ${GITHUB_WORKSPACE}/deployment/deploy-gha.sh
 
-  deploy:
-    name: Deploy
+  deploy-qa:
+    name: Deploy-QA
     needs: build
-    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.merged == true }}
+    if: ${{ github.ref_name == 'main' && github.event.pull_request.merged == true }}
     runs-on: small
     steps:
       - name: head ref
