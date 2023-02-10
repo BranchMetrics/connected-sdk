@@ -113,6 +113,9 @@ jobs:
     if: ${{ github.event_name == 'pull_request' && github.event.pull_request.merged == true }}
     runs-on: small
     steps:
-      - name: dummy deploy
-        run: echo "PR merged in branch named $BRANCH_NAME"
-        
+      - name: head ref
+        run: echo 'Head Ref ${{ github.head_ref }}'
+      - name: ref name
+        run: echo ' Ref_name ${{ github.ref_name }}'      
+      - name: ref
+        run: echo ' Ref ${{ github.ref }}'
