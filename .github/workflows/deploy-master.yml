@@ -135,3 +135,12 @@ jobs:
 
       - name: Call the Deploy bash script for QA
         run:  bash ${GITHUB_WORKSPACE}/deployment/deploy-qa.sh
+
+  bump-master:
+    name: bump-master
+    needs: deploy-qa
+    runs-on: small
+    steps:
+      - name: Run bump script
+        run: echo "Running bump"
+
