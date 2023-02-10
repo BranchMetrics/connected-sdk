@@ -16,10 +16,10 @@ NC='\033[0m'
 # Master Deploy
 #--------------------------------------------------------------------------------------------
 
-  echo -en "${GREEN}QA Release...${NC}\n"
+  echo -en "${GREEN}Start build for QA release...${NC}\n"
 
-  echo -en "${GREEN}make release ...${NC}\n"
-  make release
+  echo -en "${GREEN}call make ...${NC}\n"
+  make
 
 # Exit prompts
-echo -en "${GREEN}Done make ...${NC}\n"
+echo -en "${GREEN}Done build for QA release...${NC}\n"

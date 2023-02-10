@@ -104,8 +104,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Call the deploy Bash Script
-        run:  bash ${GITHUB_WORKSPACE}/deployment/deploy-gha.sh
+      - name: Call the Build bash script for QA
+        run:  bash ${GITHUB_WORKSPACE}/deployment/build-qa.sh
 
   deploy-qa:
     name: Deploy-QA
@@ -113,9 +113,25 @@ jobs:
     if: ${{ github.ref_name == 'main' && github.event.pull_request.merged == true }}
     runs-on: small
     steps:
-      - name: head ref
-        run: echo 'Head Ref ${{ github.head_ref }}'
-      - name: ref name
-        run: echo ' Ref_name ${{ github.ref_name }}'      
-      - name: ref
-        run: echo ' Ref ${{ github.ref }}'
+      - name: Checkout ${{ github.ref_name }}
+        uses: actions/checkout@v3
+
+      - name: Install Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Call the Build bash script for QA
+        run:  bash ${GITHUB_WORKSPACE}/deployment/build-qa.sh
+
+      - name: Call the Deploy bash script for QA
+        run:  bash ${GITHUB_WORKSPACE}/deployment/deploy-qa.sh
