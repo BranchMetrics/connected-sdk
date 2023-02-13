@@ -113,6 +113,19 @@ jobs:
     if: ${{ github.ref_name == 'main' && github.event.pull_request.merged == true }}
     runs-on: small
     steps:
+      - name: Set environment variable "commit-message"
+        run: echo "commit-message=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
+
+      - name: Display environment variable "commit-message"
+        run: echo "commit-message=${{ env.commit-message }}"
+ 
+      - name: Display head_commit
+        run: echo "${{ github.event.head_commit.message }}"
+
+      - name: Display commits of 1
+        run: echo "${{ github.event.commits[0].message }}"
+
+  
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
 
