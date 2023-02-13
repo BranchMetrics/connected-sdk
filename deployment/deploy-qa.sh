@@ -8,6 +8,19 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
+
+
+
+GIT_COMMIT_MSG=$(git log --format=%B -n 1)
+echo "$GIT_COMMIT_MSG"
+VER=$(echo "$GIT_COMMIT_MSG" | grep version | cut -f 2 -d " ")
+echo "$VER"
+VERSION=$(echo $VER|tr -d '\r')
+echo "$VERSION"
+DATE=$(date "+%Y-%m-%d")
+echo "$DATE"
+
+
 #--------------------------------------------------------------------------------------------
 # Main branch (QA) Deploy
 #--------------------------------------------------------------------------------------------
