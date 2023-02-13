@@ -50,7 +50,6 @@ echo -en "\n${GREEN}Extracted Changelog:\n$INSERT\n$CHANGELOG\n${NC}\n"
   echo -en "${GREEN}Start QA Release...${NC}\n"
 
   echo -en "${GREEN}Pushing to S3: branch-builds/connected-sdk/ ...${NC}\n"
-  aws s3 sync ./dist s3://branch-builds/connected-sdk/
   aws s3 sync ./dist s3://branch-cdn/
 
 # Exit prompts
