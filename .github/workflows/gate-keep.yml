@@ -1,16 +1,10 @@
-name: Deploy QA
+name: Gate Keeping
 on:
-  workflow_dispatch:
-    inputs:
-      branch_name:
-          description: 'Name of the branch'
-          required: true
-          default: 'main'
-
   pull_request:
-    types: [closed]
+    types: [opened,reopened,edited]
     branches:
       - main
+      - production
     paths-ignore:
       - docs/**
       - README.md
@@ -21,26 +15,6 @@ env:
   JAVA_DISTRIBUTION: 'adopt'
 
 jobs:
-  checkout-install:
-    name: Checkout and Install dependencies
-    runs-on: small
-    steps:
-      - name: Checkout ${{ github.ref_name }}
-        uses: actions/checkout@v3
-      
-      - name: Setup .npmrc
-        uses: bduff9/use-npmrc@v1.1
-        with:
-            dot-npmrc: ${{ secrets.DOT_NPMRC }}
-
-      - name: Install Node ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install packages
-        run: npm install
-
   test-unit:
     name: Unit tests
     needs: checkout-install
@@ -112,9 +86,5 @@ jobs:
       - name: Call the Build bash script for QA
         run:  bash ${GITHUB_WORKSPACE}/deployment/build-qa.sh
 
-      - name: Sync S3 Builds
-        id: s3syncbuilds
-        if: steps.build.outcome == 'success'
-        run: aws s3 sync ./dist s3://branch-builds/connected-sdk/
 
 
