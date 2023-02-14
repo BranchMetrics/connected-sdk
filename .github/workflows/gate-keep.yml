@@ -46,6 +46,11 @@ jobs:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
 
+      - name: Setup .npmrc
+        uses: bduff9/use-npmrc@v1.1
+        with:
+            dot-npmrc: ${{ secrets.DOT_NPMRC }}
+
       - name: Install Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
