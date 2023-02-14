@@ -1,10 +1,6 @@
 #/bin/bash
 
-# To trigger a production deploy push a
-# commit with these items:
-#
-# version: x.y.z
-# Changelog:
+# To trigger a production build
 
 set -e
 
@@ -13,12 +9,12 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 #--------------------------------------------------------------------------------------------
-# Master Deploy
+# Prod build
 #--------------------------------------------------------------------------------------------
 
   echo -en "${GREEN}Start build for Prod release...${NC}\n"
 
-  echo -en "${GREEN}call make ...${NC}\n"
+  echo -en "${GREEN}call make with release...${NC}\n"
   make release
 
 # Exit prompts
