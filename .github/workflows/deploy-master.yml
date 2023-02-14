@@ -146,7 +146,13 @@ jobs:
       - name: Call the Build bash script for QA
         run:  bash ${GITHUB_WORKSPACE}/deployment/build-qa.sh
 
-      - name: Deploy creatives-optimization
+      - name: S3 list builds
+        run: aws s3 ls s3://branch-builds/connected-sdk --recursive
+
+      - name: S3 list cdn
+        run: aws s3 ls s3://branch-cdns --recursive
+
+      - name: Sync S3
         run: | 
               aws s3 sync ./dist s3://branch-builds/connected-sdk/
               aws s3 sync ./dist s3://branch-cdns/
