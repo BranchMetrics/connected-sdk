@@ -1,7 +1,7 @@
 name: Gate Keeping
 on:
   pull_request:
-    types: [opened,reopened,edited]
+    types: [opened,reopened,edited,synchronize]
     branches:
       - main
       - production
@@ -17,7 +17,6 @@ env:
 jobs:
   test-unit:
     name: Unit tests
-    needs: checkout-install
     runs-on: small
     steps:
       - name: Checkout ${{ github.ref_name }}
@@ -42,11 +41,15 @@ jobs:
 
   test-lint:
     name: Lint
-    needs: checkout-install
     runs-on: small
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
+
+      - name: Setup .npmrc
+        uses: bduff9/use-npmrc@v1.1
+        with:
+            dot-npmrc: ${{ secrets.DOT_NPMRC }}
 
       - name: Install Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
@@ -60,10 +63,9 @@ jobs:
       - name: Lint tests
         run: npm run lint
 
-  deploy-qa:
-    name: Deploy-QA
-    needs: build
-    if: ${{ github.ref_name == 'main' && github.event.pull_request.merged == true }}
+  test-build:
+    name: Test-build
+    needs: [test-unit,test-lint]
     runs-on: small
     steps:
       - name: Checkout ${{ github.ref_name }}
