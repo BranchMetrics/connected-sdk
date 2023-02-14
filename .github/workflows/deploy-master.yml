@@ -95,4 +95,7 @@ jobs:
         if: steps.build.outcome == 'success'
         run: aws s3 sync ./dist s3://branch-builds/connected-sdk/
 
-
+      - name: Sync S3 Builds
+        id: s3synccdn
+        if: steps.build.outcome == 'success'
+        run: aws s3 sync ./dist s3://branch-cdn/
