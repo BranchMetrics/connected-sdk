@@ -23,7 +23,6 @@ env:
 jobs:
   test-unit:
     name: Unit tests
-    needs: checkout-install
     runs-on: small
     steps:
       - name: Checkout ${{ github.ref_name }}
@@ -48,7 +47,6 @@ jobs:
 
   test-lint:
     name: Lint
-    needs: checkout-install
     runs-on: small
     steps:
       - name: Checkout ${{ github.ref_name }}
@@ -59,6 +57,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+      - name: Setup .npmrc
+        uses: bduff9/use-npmrc@v1.1
+        with:
+            dot-npmrc: ${{ secrets.DOT_NPMRC }}
 
       - name: Install dependencies
         run: npm install
@@ -98,11 +100,6 @@ jobs:
         id: s3syncbuilds
         if: steps.build.outcome == 'success'
         run: aws s3 sync ./dist s3://branch-builds/connected-sdk/
-
-      - name: Sync S3 CDN
-        id: s3synccdn
-        if: steps.s3syncbuilds.outcome == 'success'
-        run: aws s3 sync ./dist s3://branch-cdn/
 
       - name: publish
         if: steps.s3synccdn.outcome == 'success'
