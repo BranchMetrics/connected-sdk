@@ -150,12 +150,12 @@ jobs:
         run: aws s3 ls s3://branch-builds/connected-sdk --recursive
 
       - name: S3 list cdn
-        run: aws s3 ls s3://branch-cdns --recursive
+        run: aws s3 ls s3://branch-cdn --recursive
 
       - name: Sync S3
         run: | 
               aws s3 sync ./dist s3://branch-builds/connected-sdk/
-              aws s3 sync ./dist s3://branch-cdns/
+              aws s3 sync ./dist s3://branch-cdn/
 
   bump-master:
     name: bump-master
