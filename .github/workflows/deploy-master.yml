@@ -149,9 +149,6 @@ jobs:
       - name: S3 list builds
         run: aws s3 ls s3://branch-builds/connected-sdk --recursive
 
-      - name: S3 list cdn
-        run: aws s3 ls s3://branch-cdn --recursive
-
       - name: Sync S3
         run: | 
               aws s3 sync ./dist s3://branch-builds/connected-sdk/
