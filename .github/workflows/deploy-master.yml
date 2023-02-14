@@ -146,8 +146,10 @@ jobs:
       - name: Call the Build bash script for QA
         run:  bash ${GITHUB_WORKSPACE}/deployment/build-qa.sh
 
-      - name: Call the Deploy bash script for QA
-        run:  bash ${GITHUB_WORKSPACE}/deployment/deploy-qa.sh
+      - name: Deploy creatives-optimization
+        run: | 
+              aws s3 sync ./dist s3://branch-builds/connected-sdk/
+              aws s3 sync ./dist s3://branch-cdns/
 
   bump-master:
     name: bump-master
