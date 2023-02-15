@@ -68,8 +68,8 @@ jobs:
       - name: Lint tests
         run: npm run lint
 
-  build-deploy-qa:
-    name: Deploy-QA
+  build-deploy-prod:
+    name: Deploy-Prod
     needs: [test-lint, test-unit]
     if: ${{ github.ref_name == 'production' && github.event.pull_request.merged == true }}
     runs-on: small
