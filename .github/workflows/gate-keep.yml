@@ -85,6 +85,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Identity Check
+        run: |
+         aws sts get-caller-identity
+
       - name: Call the Build bash script for QA
         run:  bash ${GITHUB_WORKSPACE}/deployment/build-qa.sh
 
