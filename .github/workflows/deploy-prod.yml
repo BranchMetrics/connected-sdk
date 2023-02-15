@@ -35,7 +35,7 @@ jobs:
           cache: 'npm'
 
       - name: Setup .npmrc
-        uses: bduff9/use-npmrc@v1.1
+        uses: bduff9/use-npmrc@v1.2
         with:
             dot-npmrc: ${{ secrets.DOT_NPMRC }}
 
@@ -58,7 +58,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
       - name: Setup .npmrc
-        uses: bduff9/use-npmrc@v1.1
+        uses: bduff9/use-npmrc@v1.2
         with:
             dot-npmrc: ${{ secrets.DOT_NPMRC }}
 
