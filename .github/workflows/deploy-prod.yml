@@ -101,6 +101,11 @@ jobs:
         if: steps.build.outcome == 'success'
         run: aws s3 sync ./dist s3://branch-builds/connected-sdk/
 
+      - name: Sync S3 CDN
+        id: s3synccdn
+        if: steps.s3syncbuilds.outcome == 'success'
+        run: aws s3 sync ./dist s3://branch-cdn
+
       - name: publish
         if: steps.s3synccdn.outcome == 'success'
         uses: JS-DevTools/npm-publish@v1
