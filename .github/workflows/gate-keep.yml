@@ -39,6 +39,9 @@ jobs:
       - name: Run tests
         run: echo "Running tests"
 
+      - name: Check npm config
+        run: npm config ls -l | grep config
+
   test-lint:
     name: Lint
     runs-on: small
@@ -62,6 +65,9 @@ jobs:
 
       - name: Lint tests
         run: npm run lint
+
+      - name: Check npm config
+        run: npm config ls -l | grep config
 
   test-build:
     name: Test-build
@@ -87,6 +93,12 @@ jobs:
 
       - name: Call the Build bash script for QA
         run:  bash ${GITHUB_WORKSPACE}/deployment/build-qa.sh
+
+      - name: Check npm config
+        run: npm config ls -l | grep config
+
+      - name: Remove .npmrc file
+        run: rm -f ~/.npmrc
 
 
 
