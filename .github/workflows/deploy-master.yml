@@ -72,7 +72,8 @@ jobs:
   deploy-qa:
     name: Deploy-QA
     needs: [test-unit,test-lint]
-    if: ${{ github.ref_name == 'main' && github.event.pull_request.merged == true }}
+    if: github.ref == 'refs/heads/add-builds-gha'
+    # if: ${{ github.ref_name == 'main' && github.event.pull_request.merged == true }}
     runs-on: [self-hosted, standard]
     steps:
       - name: Checkout ${{ github.ref_name }}
