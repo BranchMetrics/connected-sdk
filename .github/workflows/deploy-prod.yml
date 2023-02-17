@@ -106,6 +106,9 @@ jobs:
         if: steps.s3syncbuilds.outcome == 'success'
         run: aws s3 sync ./dist s3://branch-cdn
 
+      - name: Remove npmrc
+        run: rm -f ~/.npmrc
+
       - name: publish
         if: steps.s3synccdn.outcome == 'success'
         uses: JS-DevTools/npm-publish@v1
