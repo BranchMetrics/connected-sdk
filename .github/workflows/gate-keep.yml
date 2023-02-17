@@ -17,7 +17,7 @@ env:
 jobs:
   test-unit:
     name: Unit tests
-    runs-on: small
+    runs-on: [self-hosted, standard]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
@@ -41,7 +41,7 @@ jobs:
 
   test-lint:
     name: Lint
-    runs-on: small
+    runs-on: [self-hosted, standard]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
@@ -66,7 +66,7 @@ jobs:
   test-build:
     name: Test-build
     needs: [test-unit,test-lint]
-    runs-on: small
+    runs-on: [self-hosted, standard]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
