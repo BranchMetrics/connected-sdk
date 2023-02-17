@@ -104,5 +104,5 @@ jobs:
       - name: Sync S3 CDN
         id: s3synccdn
         if: steps.s3syncbuilds.outcome == 'success'
-        run: aws s3 sync ./dist s3://branch-cdn
+        run: aws s3 cp ./dist/branch-connected.min.js s3://branch-cdn/
 
