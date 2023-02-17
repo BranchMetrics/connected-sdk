@@ -1,6 +1,6 @@
 {
 	"name": "branch-connected-sdk",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "Branch Metrics Deep Linking Connected SDK",
 	"main": "dist/branch-connected.min.js",
 	"files": [
