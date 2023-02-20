@@ -6,3 +6,6 @@ The Branch Connected SDK adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.2.0] - 2023-02-17
 – Fix GHA CI/CD
+
+## [1.2.1] - 2023-02-20
+– Fix example page src

@@ -37,7 +37,7 @@ jobs:
         run: npm install
 
       - name: Run tests
-        run: echo "Running tests"
+        run: npm run test
 
   test-lint:
     name: Lint
