@@ -1,5 +1,4 @@
 // jscs:disable
-goog.addDependency('../../../../test/web-config.js', ['config'], []);
 goog.addDependency('../../../../src/0_jsonparse.js', ['safejson'], ['goog.json']);
 goog.addDependency('../../../../src/0_queue.js', ['task_queue'], []);
 goog.addDependency('../../../../src/1_utils.js', ['utils'], ['config', 'goog.json', 'safejson'], {'lang': 'es6'});
@@ -19,5 +18,5 @@ goog.addDependency('../../../../test/6_branch.js', [], ['Branch', 'config', 'goo
 goog.addDependency('../../../../test/7_integration.js', [], ['config', 'goog.json']);
 goog.addDependency('../../../../test/saucelabs.js', [], []);
 goog.addDependency('../../../../test/test-utils.js', [], [], {'lang': 'es5'});
-goog.addDependency('../../../../test/web-config.js', [], []);
+goog.addDependency('../../../../test/web-config.js', ['config'], []);
 

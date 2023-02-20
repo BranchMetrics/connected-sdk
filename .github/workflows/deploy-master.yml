@@ -23,7 +23,7 @@ env:
 jobs:
   test-unit:
     name: Unit tests
-    runs-on: small
+    runs-on: [ self-hosted, standard ]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
@@ -43,11 +43,18 @@ jobs:
         run: npm install
 
       - name: Run tests
-        run: echo "Running tests"
+        id: runTests
+        run: npm run test
+
+      - name : upload codecov
+        uses: codecov/codecov-action@v3
+        if: steps.runTests.outcome == 'success'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   test-lint:
     name: Lint
-    runs-on: small
+    runs-on: [ self-hosted, standard ]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
@@ -73,7 +80,7 @@ jobs:
     name: Deploy-QA
     needs: [test-unit,test-lint]
     if: ${{ github.ref_name == 'main' && github.event.pull_request.merged == true }}
-    runs-on: small
+    runs-on: [ self-hosted, standard ]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
@@ -101,8 +108,4 @@ jobs:
         if: steps.build.outcome == 'success'
         run: aws s3 sync ./dist s3://branch-builds/connected-sdk/
 
-      - name: Sync S3 CDN
-        id: s3synccdn
-        if: steps.s3syncbuilds.outcome == 'success'
-        run: aws s3 cp ./dist/branch-connected.min.js s3://branch-cdn/branch-connected.min.js
 
