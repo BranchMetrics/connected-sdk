@@ -23,7 +23,7 @@ env:
 jobs:
   test-unit:
     name: Unit tests
-    runs-on: small
+    runs-on: [ self-hosted, standard ]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
@@ -47,7 +47,7 @@ jobs:
 
   test-lint:
     name: Lint
-    runs-on: small
+    runs-on: [ self-hosted, standard ]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
@@ -68,11 +68,11 @@ jobs:
       - name: Lint tests
         run: npm run lint
 
-  build-deploy-qa:
-    name: Deploy-QA
+  build-deploy-prod:
+    name: Deploy-Prod
     needs: [test-lint, test-unit]
     if: ${{ github.ref_name == 'production' && github.event.pull_request.merged == true }}
-    runs-on: small
+    runs-on: [ self-hosted, standard ]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
@@ -101,9 +101,18 @@ jobs:
         if: steps.build.outcome == 'success'
         run: aws s3 sync ./dist s3://branch-builds/connected-sdk/
 
+      - name: Sync S3 CDN
+        id: s3synccdn
+        if: steps.s3syncbuilds.outcome == 'success'
+        run: aws s3 cp ./dist/branch-connected.min.js s3://branch-cdn/branch-connected.min.js
+
+      - name: Remove npmrc
+        run: rm -f ~/.npmrc
+
       - name: publish
         if: steps.s3synccdn.outcome == 'success'
         uses: JS-DevTools/npm-publish@v1
         with:
          token: ${{ secrets.NPM_TOKEN }}
+
 

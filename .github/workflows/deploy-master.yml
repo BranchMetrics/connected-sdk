@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       branch_name:
-          description: 'Name of the branch'
+          description: 'Enter name of the branch'
           required: true
           default: 'main'
 
@@ -23,7 +23,7 @@ env:
 jobs:
   test-unit:
     name: Unit tests
-    runs-on: small
+    runs-on: [ self-hosted, standard ]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
@@ -43,14 +43,26 @@ jobs:
         run: npm install
 
       - name: Run tests
-        run: echo "Running tests"
+        id: runTests
+        run: npm run test
+
+      - name : upload codecov
+        uses: codecov/codecov-action@v3
+        if: steps.runTests.outcome == 'success'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   test-lint:
     name: Lint
-    runs-on: small
+    runs-on: [ self-hosted, standard ]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
+
+      - name: Setup .npmrc
+        uses: bduff9/use-npmrc@v1.1
+        with:
+            dot-npmrc: ${{ secrets.DOT_NPMRC }}
 
       - name: Install Node ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
@@ -68,7 +80,7 @@ jobs:
     name: Deploy-QA
     needs: [test-unit,test-lint]
     if: ${{ github.ref_name == 'main' && github.event.pull_request.merged == true }}
-    runs-on: small
+    runs-on: [ self-hosted, standard ]
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
@@ -88,6 +100,7 @@ jobs:
         run: npm install
 
       - name: Call the Build bash script for QA
+        id: build
         run:  bash ${GITHUB_WORKSPACE}/deployment/build-qa.sh
 
       - name: Sync S3 Builds

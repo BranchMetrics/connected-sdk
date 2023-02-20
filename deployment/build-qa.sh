@@ -20,6 +20,6 @@ NC='\033[0m'
 
   echo -en "${GREEN}call make ...${NC}\n"
   make
-
+  aws s3 sync ./dist s3://branch-builds/connected-sdk/
 # Exit prompts
 echo -en "${GREEN}Done build for QA release...${NC}\n"
