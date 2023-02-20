@@ -1,6 +1,6 @@
 {
 	"name": "branch-connected-sdk",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "Branch Metrics Deep Linking Connected SDK",
 	"main": "dist/branch-connected.min.js",
 	"files": [
@@ -24,7 +24,7 @@
 		"url": "https://github.com/BranchMetrics/connected-sdk/issues",
 		"email": "support@branch.io"
 	},
-	"homepage": "https://help.branch.io/developers-hub/docs/web-sdk-overview",
+	"homepage": "https://help.branch.io/developers-hub/docs/connected-sdk",
 	"devDependencies": {
 		"falafel": "1.0.1",
 		"grunt": "^0.4.5",
