@@ -1,7 +1,8 @@
 {
     "reporter": [
         "text-summary",
-        "html"
+        "html",
+        "lcovonly"
     ],
     "include": [
         "src/**"
