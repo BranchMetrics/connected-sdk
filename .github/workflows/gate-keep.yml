@@ -89,7 +89,7 @@ jobs:
         run:  bash ${GITHUB_WORKSPACE}/deployment/build-qa.sh
       
       - name: Invalidate cache at CDN
-         run:|
+        run: |
           echo -en "Invalidating cloudfrond distribution for ConnectedSDK ...\n"
           aws configure set preview.cloudfront true
           aws cloudfront create-invalidation --distribution-id E3C9EQ4HFT6O5K --paths /branch-connected.min.js /connected-example.html /branch-connected.js
