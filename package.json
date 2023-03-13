@@ -40,7 +40,7 @@
 		"mocha": "^10.2.0",
 		"nyc": "^15.1.0",
 		"precommit-hook": "1.0.7",
-		"sinon": "1.17.3"
+		"sinon": "15.0.2"
 	},
 	"dependencies": {
 		"google-closure-compiler": "^20220601.0.0",
