@@ -93,6 +93,7 @@ jobs:
           echo -en "Invalidating cloudfrond distribution for ConnectedSDK ...\n"
           aws configure set preview.cloudfront true
           aws cloudfront create-invalidation --distribution-id E10P37NG0GMER --paths "/connected-sdk/connected-example.html" "/connected-sdk/branch-connected.min.js" "/connected-sdk/branch-connected.js"
+          aws cloudfront create-invalidation --distribution-id E10P37NG0GMER --paths /branch-latest.min.js /example.html /branch-v2.0.0.min.js
 
 
 
