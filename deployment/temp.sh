@@ -10,5 +10,5 @@
   echo -en "${GREEN}Pushing to S3: branch-cdn ...${NC}\n"
   aws s3 cp --content-type="text/javascript" --content-encoding="gzip" temp/build.min.js.gz s3://branch-cdn/branch-2.72.0.min.js --cache-control "max-age=300"
   aws s3 cp --content-type="text/javascript" --content-encoding="gzip" temp/build.min.js.gz s3://branch-cdn/branch-latest.min.js --cache-control "max-age=300"
-  aws s3 cp temp/example.html s3://branch-cdn/example.html --acl public-read
+  aws s3 cp temp/example.html s3://branch-cdn/example.html
 
