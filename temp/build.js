@@ -489,8 +489,8 @@ goog.inherits = function(a, b) {
   a.prototype = new c();
   a.prototype.constructor = a;
   a.base = function(d, e, f) {
-    for (var g = Array(arguments.length - 2), h = 2; h < arguments.length; h++) {
-      g[h - 2] = arguments[h];
+    for (var g = Array(arguments.length - 2), k = 2; k < arguments.length; k++) {
+      g[k - 2] = arguments[k];
     }
     return b.prototype[e].apply(d, g);
   };
@@ -655,16 +655,16 @@ goog.createTrustedTypesPolicy = function(a) {
         e = !0;
         a.loaded_(d);
       }, pending:function() {
-        for (var g = [], h = 0; h < a.loadingDeps_.length; h++) {
-          g.push(a.loadingDeps_[h]);
+        for (var g = [], k = 0; k < a.loadingDeps_.length; k++) {
+          g.push(a.loadingDeps_[k]);
         }
         return g;
       }, setModuleState:function(g) {
         goog.moduleLoaderState_ = {type:g, moduleName:"", declareLegacyNamespace:!1};
-      }, registerEs6ModuleExports:function(g, h, k) {
-        k && (goog.loadedModules_[k] = {exports:h, type:goog.ModuleType.ES6, moduleId:k || ""});
-      }, registerGoogModuleExports:function(g, h) {
-        goog.loadedModules_[g] = {exports:h, type:goog.ModuleType.GOOG, moduleId:g};
+      }, registerEs6ModuleExports:function(g, k, h) {
+        h && (goog.loadedModules_[h] = {exports:k, type:goog.ModuleType.ES6, moduleId:h || ""});
+      }, registerGoogModuleExports:function(g, k) {
+        goog.loadedModules_[g] = {exports:k, type:goog.ModuleType.GOOG, moduleId:g};
       }, clearModuleState:function() {
         goog.moduleLoaderState_ = null;
       }, defer:function(g) {
@@ -782,8 +782,8 @@ goog.createTrustedTypesPolicy = function(a) {
       }
       var c = goog.getScriptNonce_();
       if (!goog.ENABLE_CHROME_APP_SAFE_SCRIPT_LOADING && goog.isDocumentLoading_()) {
-        var d = function(h) {
-          h.readyState && "complete" != h.readyState ? h.onload = d : (goog.Dependency.unregisterCallback_(e), a.loaded());
+        var d = function(k) {
+          k.readyState && "complete" != k.readyState ? k.onload = d : (goog.Dependency.unregisterCallback_(e), a.loaded());
         };
         var e = goog.Dependency.registerCallback_(d);
         c = c ? ' nonce="' + c + '"' : "";
@@ -811,13 +811,13 @@ goog.createTrustedTypesPolicy = function(a) {
 }, goog.Es6ModuleDependency = function(a, b, c, d, e) {
   goog.Dependency.call(this, a, b, c, d, e);
 }, goog.inherits(goog.Es6ModuleDependency, goog.Dependency), goog.Es6ModuleDependency.prototype.load = function(a) {
-  function b(l, n) {
+  function b(l, m) {
     var q = "", r = goog.getScriptNonce_();
     r && (q = ' nonce="' + r + '"');
-    l = n ? '<script type="module" crossorigin' + q + ">" + n + "\x3c/script>" : '<script type="module" crossorigin src="' + l + '"' + q + ">\x3c/script>";
+    l = m ? '<script type="module" crossorigin' + q + ">" + m + "\x3c/script>" : '<script type="module" crossorigin src="' + l + '"' + q + ">\x3c/script>";
     d.write(goog.TRUSTED_TYPES_POLICY_ ? goog.TRUSTED_TYPES_POLICY_.createHTML(l) : l);
   }
-  function c(l, n) {
+  function c(l, m) {
     var q = d.createElement("script");
     q.defer = !0;
     q.async = !1;
@@ -825,7 +825,7 @@ goog.createTrustedTypesPolicy = function(a) {
     q.setAttribute("crossorigin", !0);
     var r = goog.getScriptNonce_();
     r && (q.nonce = r);
-    n ? q.text = goog.TRUSTED_TYPES_POLICY_ ? goog.TRUSTED_TYPES_POLICY_.createScript(n) : n : q.src = goog.TRUSTED_TYPES_POLICY_ ? goog.TRUSTED_TYPES_POLICY_.createScriptURL(l) : l;
+    m ? q.text = goog.TRUSTED_TYPES_POLICY_ ? goog.TRUSTED_TYPES_POLICY_.createScript(m) : m : q.src = goog.TRUSTED_TYPES_POLICY_ ? goog.TRUSTED_TYPES_POLICY_.createScriptURL(l) : l;
     d.head.appendChild(q);
   }
   if (goog.global.CLOSURE_IMPORT_SCRIPT) {
@@ -845,17 +845,17 @@ goog.createTrustedTypesPolicy = function(a) {
       });
       f(void 0, 'goog.Dependency.callback_("' + g + '")');
       f(this.path, void 0);
-      var h = goog.Dependency.registerCallback_(function(l) {
-        goog.Dependency.unregisterCallback_(h);
+      var k = goog.Dependency.registerCallback_(function(l) {
+        goog.Dependency.unregisterCallback_(k);
         a.registerEs6ModuleExports(e.path, l, goog.moduleLoaderState_.moduleName);
       });
-      f(void 0, 'import * as m from "' + this.path + '"; goog.Dependency.callback_("' + h + '", m)');
-      var k = goog.Dependency.registerCallback_(function() {
-        goog.Dependency.unregisterCallback_(k);
+      f(void 0, 'import * as m from "' + this.path + '"; goog.Dependency.callback_("' + k + '", m)');
+      var h = goog.Dependency.registerCallback_(function() {
+        goog.Dependency.unregisterCallback_(h);
         a.clearModuleState();
         a.loaded();
       });
-      f(void 0, 'goog.Dependency.callback_("' + k + '")');
+      f(void 0, 'goog.Dependency.callback_("' + h + '")');
     } else {
       goog.logToConsole_("Cannot use default debug loader outside of HTML documents."), a.pause();
     }
@@ -878,23 +878,23 @@ goog.createTrustedTypesPolicy = function(a) {
         e.contents_ = null;
         goog.globalEval(goog.CLOSURE_EVAL_PREFILTER_.createScript(l));
         if (f) {
-          var n = goog.moduleLoaderState_.moduleName;
+          var m = goog.moduleLoaderState_.moduleName;
         }
       } finally {
         f && a.clearModuleState();
       }
       f && goog.global.$jscomp.require.ensure([e.getPathName()], function() {
-        a.registerEs6ModuleExports(e.path, goog.global.$jscomp.require(e.getPathName()), n);
+        a.registerEs6ModuleExports(e.path, goog.global.$jscomp.require(e.getPathName()), m);
       });
       a.loaded();
     }
   }
   function d() {
-    var l = goog.global.document, n = goog.Dependency.registerCallback_(function() {
-      goog.Dependency.unregisterCallback_(n);
+    var l = goog.global.document, m = goog.Dependency.registerCallback_(function() {
+      goog.Dependency.unregisterCallback_(m);
       c();
     }), q = goog.getScriptNonce_();
-    q = "<script" + (q ? ' nonce="' + q + '"' : "") + ">" + goog.protectScriptTag_('goog.Dependency.callback_("' + n + '");') + "\x3c/script>";
+    q = "<script" + (q ? ' nonce="' + q + '"' : "") + ">" + goog.protectScriptTag_('goog.Dependency.callback_("' + m + '");') + "\x3c/script>";
     l.write(goog.TRUSTED_TYPES_POLICY_ ? goog.TRUSTED_TYPES_POLICY_.createHTML(q) : q);
   }
   var e = this;
@@ -909,15 +909,15 @@ goog.createTrustedTypesPolicy = function(a) {
         c();
       });
     } else {
-      var h = goog.global.document;
+      var k = goog.global.document;
       g = goog.inHtmlDocument_() && ("ActiveXObject" in goog.global || goog.isEdge_());
       if (f && goog.inHtmlDocument_() && goog.isDocumentLoading_() && !g) {
         goog.Dependency.defer_ = !0;
         a.pause();
-        var k = h.onreadystatechange;
-        h.onreadystatechange = function() {
-          "interactive" == h.readyState && (h.onreadystatechange = k, c(), a.resume());
-          "function" === typeof k && k.apply(void 0, arguments);
+        var h = k.onreadystatechange;
+        k.onreadystatechange = function() {
+          "interactive" == k.readyState && (k.onreadystatechange = h, c(), a.resume());
+          "function" === typeof h && h.apply(void 0, arguments);
         };
       } else {
         goog.inHtmlDocument_() && goog.isDocumentLoading_() ? d() : c();
@@ -1362,10 +1362,10 @@ utils.base64encode = function(a) {
     c = a.charCodeAt(d++);
     f = g >> 2;
     g = (g & 3) << 4 | e >> 4;
-    var h = (e & 15) << 2 | c >> 6;
-    var k = c & 63;
-    isNaN(e) ? k = h = 64 : isNaN(c) && (k = 64);
-    b = b + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(f) + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(g) + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(h) + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(k);
+    var k = (e & 15) << 2 | c >> 6;
+    var h = c & 63;
+    isNaN(e) ? h = k = 64 : isNaN(c) && (h = 64);
+    b = b + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(f) + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(g) + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(k) + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".charAt(h);
   }
   return b;
 };
@@ -1704,6 +1704,7 @@ resources.qrCode = {destination:config.api_endpoint, endpoint:"/v1/qr-code", met
 tags:validator(!1, validationTypes.ARRAY), type:validator(!1, validationTypes.NUMBER), source:validator(!1, validationTypes.STRING)})};
 resources.deepview = {destination:config.api_endpoint, endpoint:"/v1/deepview", jsonp:!0, method:utils.httpMethod.POST, params:defaults({campaign:validator(!1, validationTypes.STRING), _t:validator(!1, validationTypes.STRING), channel:validator(!1, validationTypes.STRING), data:validator(!0, validationTypes.STRING), feature:validator(!1, validationTypes.STRING), link_click_id:validator(!1, validationTypes.STRING), open_app:validator(!1, validationTypes.BOOLEAN), append_deeplink_path:validator(!1, 
 validationTypes.BOOLEAN), stage:validator(!1, validationTypes.STRING), tags:validator(!1, validationTypes.ARRAY), deepview_type:validator(!0, validationTypes.STRING), source:validator(!0, validationTypes.STRING)})};
+resources.hasApp = {destination:config.api_endpoint, endpoint:"/v1/has-app", method:utils.httpMethod.GET, params:{browser_fingerprint_id:validator(!0, validationTypes.STRING), instrumentation:validator(!1, validationTypes.STRING)}};
 resources.event = {destination:config.api_endpoint, endpoint:"/v1/event", method:utils.httpMethod.POST, params:defaults({event:validator(!0, validationTypes.STRING), metadata:validator(!0, validationTypes.OBJECT), initial_referrer:validator(!1, validationTypes.STRING), tracking_disabled:validator(!1, validationTypes.BOOLEAN)})};
 resources.commerceEvent = {destination:config.api_endpoint, endpoint:"/v1/event", method:utils.httpMethod.POST, params:defaults({event:validator(!0, validationTypes.STRING), metadata:validator(!1, validationTypes.OBJECT), initial_referrer:validator(!1, validationTypes.STRING), commerce_data:validator(!0, validationTypes.OBJECT)})};
 resources.logStandardEvent = {destination:config.api_endpoint, endpoint:"/v2/event/standard", method:utils.httpMethod.POST, params:{name:validator(!0, validationTypes.STRING), user_data:validator(!0, validationTypes.STRING), custom_data:validator(!1, validationTypes.STRING), event_data:validator(!1, validationTypes.STRING), content_items:validator(!1, validationTypes.STRING), customer_event_alias:validator(!1, validationTypes.STRING)}};
@@ -1851,52 +1852,62 @@ Server.prototype.serializeObject = function(a, b) {
   return c.join("&");
 };
 Server.prototype.getUrl = function(a, b) {
-  var c, d = a.destination + a.endpoint, e = /^[0-9]{15,20}$/, f = /key_(live|test)_[A-Za-z0-9]{32}/;
+  var c, d, e = a.destination + a.endpoint, f = /^[0-9]{15,20}$/, g = /key_(live|test)_[A-Za-z0-9]{32}/, k = function(l, m) {
+    "undefined" === typeof m && (m = {});
+    if (l.branch_key && g.test(l.branch_key)) {
+      return m.branch_key = l.branch_key, m;
+    }
+    if (l.app_id && f.test(l.app_id)) {
+      return m.app_id = l.app_id, m;
+    }
+    if (l.instrumentation) {
+      m.instrumentation = l.instrumentation;
+    } else {
+      throw Error(utils.message(utils.messages.missingParam, [a.endpoint, "branch_key or app_id"]));
+    }
+  };
+  if ("/v1/has-app" === a.endpoint) {
+    try {
+      a.queryPart = k(b, a.queryPart);
+    } catch (l) {
+      return {error:l.message};
+    }
+  }
   if ("undefined" !== typeof a.queryPart) {
-    for (h in a.queryPart) {
-      if (a.queryPart.hasOwnProperty(h)) {
-        if (c = "function" === typeof a.queryPart[h] ? a.queryPart[h](a.endpoint, h, b[h]) : c) {
-          return {error:c};
+    for (c in a.queryPart) {
+      if (a.queryPart.hasOwnProperty(c)) {
+        if (d = "function" === typeof a.queryPart[c] ? a.queryPart[c](a.endpoint, c, b[c]) : d) {
+          return {error:d};
         }
-        d += "/" + b[h];
+        e += "/" + b[c];
       }
     }
   }
-  var g = {};
+  var h = {};
   if ("undefined" !== typeof a.params && "/v1/pageview" !== a.endpoint && "/v1/dismiss" !== a.endpoint) {
-    for (h in a.params) {
-      if (a.params.hasOwnProperty(h)) {
-        if (c = a.params[h](a.endpoint, h, b[h])) {
-          return {error:c};
+    for (c in a.params) {
+      if (a.params.hasOwnProperty(c)) {
+        if (d = a.params[c](a.endpoint, c, b[c])) {
+          return {error:d};
         }
-        c = b[h];
-        "undefined" !== typeof c && "" !== c && null !== c && (g[h] = c);
+        d = b[c];
+        "undefined" !== typeof d && "" !== d && null !== d && (h[c] = d);
       }
     }
   } else {
-    "/v1/pageview" !== a.endpoint && "/v1/dismiss" !== a.endpoint || utils.merge(g, b);
+    "/v1/pageview" !== a.endpoint && "/v1/dismiss" !== a.endpoint || utils.merge(h, b);
   }
   if ("POST" === a.method) {
     try {
-      var h = g;
-      "undefined" === typeof h && (h = {});
-      if (b.branch_key && f.test(b.branch_key)) {
-        h.branch_key = b.branch_key;
-      } else if (b.app_id && e.test(b.app_id)) {
-        h.app_id = b.app_id;
-      } else if (b.instrumentation) {
-        h.instrumentation = b.instrumentation;
-      } else {
-        throw Error(utils.message(utils.messages.missingParam, [a.endpoint, "branch_key or app_id"]));
-      }
-    } catch (k) {
-      return {error:k.message};
+      b = k(b, h);
+    } catch (l) {
+      return {error:l.message};
     }
   }
-  "/v1/event" === a.endpoint && (g.metadata = safejson.stringify(g.metadata || {}), g.hasOwnProperty("commerce_data") && (g.commerce_data = safejson.stringify(g.commerce_data || {})));
-  ("/v1/pageview" === a.endpoint || "/v1/dismiss" === a.endpoint) && g.metadata && (g.metadata = safejson.stringify(g.metadata || {}));
-  "/v1/open" === a.endpoint && (g.options = safejson.stringify(g.options || {}));
-  return {data:this.serializeObject(g, ""), url:d.replace(/^\//, "")};
+  "/v1/event" === a.endpoint && (h.metadata = safejson.stringify(h.metadata || {}), h.hasOwnProperty("commerce_data") && (h.commerce_data = safejson.stringify(h.commerce_data || {})));
+  ("/v1/pageview" === a.endpoint || "/v1/dismiss" === a.endpoint) && h.metadata && (h.metadata = safejson.stringify(h.metadata || {}));
+  "/v1/open" === a.endpoint && (h.options = safejson.stringify(h.options || {}));
+  return {data:this.serializeObject(h, ""), url:e.replace(/^\//, "")};
 };
 Server.prototype.createScript = function(a, b, c) {
   var d = document.createElement("script");
@@ -1910,19 +1921,19 @@ Server.prototype.createScript = function(a, b, c) {
 Server.prototype.jsonpRequest = function(a, b, c, d) {
   var e = Date.now(), f = utils.currentRequestBrttTag;
   0 === this._jsonp_callback_index && utils.isSafari11OrGreater() && this._jsonp_callback_index++;
-  var g = "branch_callback__" + this._jsonp_callback_index++, h = 0 <= a.indexOf("branch.io") ? "&data=" : "&post_data=";
+  var g = "branch_callback__" + this._jsonp_callback_index++, k = 0 <= a.indexOf("branch.io") ? "&data=" : "&post_data=";
   b = "POST" === c ? encodeURIComponent(utils.base64encode(goog.json.serialize(b))) : "";
-  var k = window.setTimeout(function() {
+  var h = window.setTimeout(function() {
     window[g] = function() {
     };
     utils.addPropertyIfNotNull(utils.instrumentation, f, utils.calculateBrtt(e));
     d(Error(utils.messages.timeout), null, 504);
   }, utils.timeout);
   window[g] = function(l) {
-    window.clearTimeout(k);
+    window.clearTimeout(h);
     d(null, l);
   };
-  this.createScript(a + (0 > a.indexOf("?") ? "?" : "") + (b ? h + b : "") + (0 <= a.indexOf("/c/") ? "&click=1" : "") + "&callback=" + g, function() {
+  this.createScript(a + (0 > a.indexOf("?") ? "?" : "") + (b ? k + b : "") + (0 <= a.indexOf("/c/") ? "&click=1" : "") + "&callback=" + g, function() {
     d(Error(utils.messages.blockedByClient), null);
   }, function() {
     utils.addPropertyIfNotNull(utils.instrumentation, f, utils.calculateBrtt(e));
@@ -1934,30 +1945,30 @@ Server.prototype.jsonpRequest = function(a, b, c, d) {
   });
 };
 Server.prototype.XHRRequest = function(a, b, c, d, e, f, g) {
-  var h = Date.now(), k = utils.currentRequestBrttTag, l = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+  var k = Date.now(), h = utils.currentRequestBrttTag, l = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
   g && (l.responseType = g);
   l.ontimeout = function() {
-    utils.addPropertyIfNotNull(utils.instrumentation, k, utils.calculateBrtt(h));
+    utils.addPropertyIfNotNull(utils.instrumentation, h, utils.calculateBrtt(k));
     e(Error(utils.messages.timeout), null, 504);
   };
-  l.onerror = function(n) {
-    e(Error(n.error || "Error in API: " + l.status), null, l.status);
+  l.onerror = function(m) {
+    e(Error(m.error || "Error in API: " + l.status), null, l.status);
   };
   l.onreadystatechange = function() {
     if (4 === l.readyState) {
-      if (utils.addPropertyIfNotNull(utils.instrumentation, k, utils.calculateBrtt(h)), 200 === l.status) {
+      if (utils.addPropertyIfNotNull(utils.instrumentation, h, utils.calculateBrtt(k)), 200 === l.status) {
         if ("arraybuffer" === l.responseType) {
-          var n = l.response;
+          var m = l.response;
         } else if (f) {
-          n = l.responseText;
+          m = l.responseText;
         } else {
           try {
-            n = safejson.parse(l.responseText);
+            m = safejson.parse(l.responseText);
           } catch (q) {
-            n = {};
+            m = {};
           }
         }
-        e(null, n, l.status);
+        e(null, m, l.status);
       } else if ("4" === l.status.toString().substring(0, 1) || "5" === l.status.toString().substring(0, 1)) {
         l.responseURL && l.responseURL.includes("v2/event") ? e(l.responseText, null, l.status) : e(Error("Error in API: " + l.status), null, l.status);
       }
@@ -1965,14 +1976,14 @@ Server.prototype.XHRRequest = function(a, b, c, d, e, f, g) {
   };
   try {
     l.open(c, a, !0), l.timeout = utils.timeout, l.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"), l.send(b);
-  } catch (n) {
+  } catch (m) {
     d.set("use_jsonp", !0), this.jsonpRequest(a, b, c, e);
   }
 };
 Server.prototype.request = function(a, b, c, d) {
   var e = this;
   utils.currentRequestBrttTag = "/v1/pageview" === a.endpoint && b && b.journey_displayed ? a.endpoint + "-1-brtt" : a.endpoint + "-brtt";
-  "/v1/url" === a.endpoint && 1 < Object.keys(utils.instrumentation).length && (delete utils.instrumentation["-brtt"], b.instrumentation = safejson.stringify(utils.merge({}, utils.instrumentation)), utils.instrumentation = {});
+  ("/v1/url" === a.endpoint || "/v1/has-app" === a.endpoint) && 1 < Object.keys(utils.instrumentation).length && (delete utils.instrumentation["-brtt"], b.instrumentation = safejson.stringify(utils.merge({}, utils.instrumentation)), utils.instrumentation = {});
   if (utils.userPreferences.trackingDisabled) {
     for (var f = ["browser_fingerprint_id", "alternative_browser_fingerprint_id", "identity_id", "session_id", "identity"], g = 0; g < f.length; g++) {
       b.hasOwnProperty(f[g]) && delete b[f[g]];
@@ -1982,22 +1993,22 @@ Server.prototype.request = function(a, b, c, d) {
   if (f.error) {
     return d(Error(safejson.stringify({message:f.error, endpoint:a.endpoint, data:b})));
   }
-  var h = "";
+  var k = "";
   if ("GET" === a.method) {
-    var k = f.url + "?" + f.data;
+    var h = f.url + "?" + f.data;
   } else {
-    k = f.url, h = f.data;
+    h = f.url, k = f.data;
   }
-  var l = c.get("use_jsonp") || a.jsonp ? b : h;
-  var n = utils.retries, q = function(p, u, t) {
+  var l = c.get("use_jsonp") || a.jsonp ? b : k;
+  var m = utils.retries, q = function(p, t, u) {
     if ("function" === typeof e.onAPIResponse) {
-      e.onAPIResponse(k, a.method, l, p, t, u);
+      e.onAPIResponse(h, a.method, l, p, u, t);
     }
-    p && 0 < n && "5" === (t || "").toString().substring(0, 1) ? (n--, window.setTimeout(function() {
-      m();
-    }, utils.retry_delay)) : d(p, u);
+    p && 0 < m && "5" === (u || "").toString().substring(0, 1) ? (m--, window.setTimeout(function() {
+      n();
+    }, utils.retry_delay)) : d(p, t);
   };
-  if (utils.userPreferences.trackingDisabled && utils.userPreferences.shouldBlockRequest(k, b)) {
+  if (utils.userPreferences.trackingDisabled && utils.userPreferences.shouldBlockRequest(h, b)) {
     return utils.userPreferences.allowErrorsInCallback ? q(Error(utils.messages.trackingDisabled), null, 300) : q(null, {}, 200);
   }
   var r = !1;
@@ -2005,10 +2016,10 @@ Server.prototype.request = function(a, b, c, d) {
     r = !0;
     var w = "arraybuffer";
   }
-  var m = function() {
-    c.get("use_jsonp") || a.jsonp ? e.jsonpRequest(k, b, a.method, q) : e.XHRRequest(k, h, a.method, c, q, r, w);
+  var n = function() {
+    c.get("use_jsonp") || a.jsonp ? e.jsonpRequest(h, b, a.method, q) : e.XHRRequest(h, k, a.method, c, q, r, w);
   };
-  m();
+  n();
 };
 // Input 8
 var banner_utils = {animationSpeed:250, animationDelay:20, bannerHeight:"76px", error_timeout:2000, removeElement:function(a) {
@@ -2033,23 +2044,23 @@ var banner_utils = {animationSpeed:250, animationDelay:20, bannerHeight:"76px", 
     d = d.match(/\d+/g);
     var f = parseInt(0 < d.length ? d[0] : "0", 10), g = function() {
       return Math.max(document.documentElement.clientWidth, window.innerWidth || 0) / 100;
-    }, h = function() {
+    }, k = function() {
       return Math.max(document.documentElement.clientHeight, window.innerHeight || 0) / 100;
     };
-    return parseInt({px:function(k) {
-      return k;
-    }, em:function(k) {
-      return document.body.currentStyle ? k * c(document.body.currentStyle.fontSize) : k * parseFloat(window.getComputedStyle(document.body).fontSize);
-    }, rem:function(k) {
-      return document.documentElement.currentStyle ? k * c(document.documentElement.currentStyle.fontSize) : k * parseFloat(window.getComputedStyle(document.documentElement).fontSize);
-    }, vw:function(k) {
-      return k * g();
-    }, vh:function(k) {
-      return k * h();
-    }, vmin:function(k) {
-      return k * Math.min(h(), g());
-    }, vmax:function(k) {
-      return k * Math.max(h(), g());
+    return parseInt({px:function(h) {
+      return h;
+    }, em:function(h) {
+      return document.body.currentStyle ? h * c(document.body.currentStyle.fontSize) : h * parseFloat(window.getComputedStyle(document.body).fontSize);
+    }, rem:function(h) {
+      return document.documentElement.currentStyle ? h * c(document.documentElement.currentStyle.fontSize) : h * parseFloat(window.getComputedStyle(document.documentElement).fontSize);
+    }, vw:function(h) {
+      return h * g();
+    }, vh:function(h) {
+      return h * k();
+    }, vmin:function(h) {
+      return h * Math.min(k(), g());
+    }, vmax:function(h) {
+      return h * Math.max(k(), g());
     }, "%":function() {
       return document.body.clientWidth / 100 * f;
     }}[e](f), 10);
@@ -2119,8 +2130,8 @@ var session = {get:function(a, b) {
     a.set("branch_session", b);
   }
 }, patch:function(a, b, c, d) {
-  var e = function(g, h) {
-    return utils.encodeBFPs(utils.merge(safejson.parse(g), h, d));
+  var e = function(g, k) {
+    return utils.encodeBFPs(utils.merge(safejson.parse(g), k, d));
   }, f = a.get("branch_session", !1) || {};
   a.set("branch_session", goog.json.serialize(e(f, b)));
   c && (c = a.get("branch_session_first", !0) || {}, a.set("branch_session_first", goog.json.serialize(e(c, b)), !0));
@@ -2185,12 +2196,12 @@ var banner = function(a, b, c, d) {
     return a._publishEvent("willNotShowBanner"), null;
   }
   a._publishEvent("willShowBanner");
-  var e, f = document.body.style.marginTop, g = document.body.style.marginBottom, h = function(k, l) {
-    "function" === typeof k && (l = k, k = {});
-    k = k || {};
+  var e, f = document.body.style.marginTop, g = document.body.style.marginBottom, k = function(h, l) {
+    "function" === typeof h && (l = h, h = {});
+    h = h || {};
     "top" === b.position ? e.style.top = "-" + banner_utils.bannerHeight : "bottom" === b.position && (e.style.bottom = "-" + banner_utils.bannerHeight);
     "number" === typeof b.forgetHide ? d.set("hideBanner", banner_utils.getDate(b.forgetHide), !0) : d.set("hideBanner", !0, !0);
-    k.immediate ? ("top" === b.position ? document.body.style.marginTop = f : "bottom" === b.position && (document.body.style.marginBottom = g), banner_utils.removeClass(document.body, "branch-banner-is-active"), banner_utils.removeElement(e), banner_utils.removeElement(document.getElementById("branch-css")), l()) : (setTimeout(function() {
+    h.immediate ? ("top" === b.position ? document.body.style.marginTop = f : "bottom" === b.position && (document.body.style.marginBottom = g), banner_utils.removeClass(document.body, "branch-banner-is-active"), banner_utils.removeElement(e), banner_utils.removeElement(document.getElementById("branch-css")), l()) : (setTimeout(function() {
       banner_utils.removeElement(e);
       banner_utils.removeElement(document.getElementById("branch-css"));
       l();
@@ -2199,52 +2210,52 @@ var banner = function(a, b, c, d) {
       banner_utils.removeClass(document.body, "branch-banner-is-active");
     }, banner_utils.animationDelay));
   };
-  banner_html.markup(b, d, function(k) {
+  banner_html.markup(b, d, function(h) {
     function l() {
       "top" === b.position ? e.style.top = "0" : "bottom" === b.position && (e.style.bottom = "0");
       a._publishEvent("didShowBanner");
     }
-    e = k;
+    e = h;
     banner_css.css(b, e);
     c.channel = c.channel || "app banner";
-    k = b.iframe ? e.contentWindow.document : document;
+    h = b.iframe ? e.contentWindow.document : document;
     if (utils.mobileUserAgent()) {
       b.open_app = b.open_app;
       b.append_deeplink_path = b.append_deeplink_path;
       b.make_new_link = b.make_new_link;
       b.deepview_type = "banner";
       a.deepview(c, b);
-      var n = k.getElementById("branch-mobile-action");
-      n && (n.onclick = function(r) {
+      var m = h.getElementById("branch-mobile-action");
+      m && (m.onclick = function(r) {
         r.preventDefault();
         a.deepviewCta();
       });
     }
-    n = banner_utils.getBodyStyle("margin-top");
+    m = banner_utils.getBodyStyle("margin-top");
     var q = banner_utils.getBodyStyle("margin-bottom");
     banner_utils.addClass(document.body, "branch-banner-is-active");
-    "top" === b.position ? document.body.style.marginTop = banner_utils.addCSSLengths(banner_utils.bannerHeight, n) : "bottom" === b.position && (document.body.style.marginBottom = banner_utils.addCSSLengths(banner_utils.bannerHeight, q));
-    if (n = k.getElementById("branch-banner-close")) {
-      n.onclick = function(r) {
+    "top" === b.position ? document.body.style.marginTop = banner_utils.addCSSLengths(banner_utils.bannerHeight, m) : "bottom" === b.position && (document.body.style.marginBottom = banner_utils.addCSSLengths(banner_utils.bannerHeight, q));
+    if (m = h.getElementById("branch-banner-close")) {
+      m.onclick = function(r) {
         r.preventDefault();
         a._publishEvent("willCloseBanner");
-        h({}, function() {
+        k({}, function() {
           a._publishEvent("didCloseBanner");
         });
       };
     }
-    if (k = k.getElementById("branch-banner-modal-background")) {
-      k.onclick = function(r) {
+    if (h = h.getElementById("branch-banner-modal-background")) {
+      h.onclick = function(r) {
         r.preventDefault();
         a._publishEvent("willCloseBanner");
-        h({}, function() {
+        k({}, function() {
           a._publishEvent("didCloseBanner");
         });
       };
     }
     b.immediate ? l() : setTimeout(l, banner_utils.animationDelay);
   });
-  return h;
+  return k;
 };
 // Input 13
 var task_queue = function() {
@@ -2398,9 +2409,9 @@ journeys_utils.addIframeOuterCSS = function(a, b) {
   var e = +journeys_utils.bodyMarginBottom.slice(0, -2), f = +journeys_utils.bannerHeight.slice(0, -2);
   a || ("top" === journeys_utils.position ? document.body.style.marginTop = (+f + d).toString() + "px" : "bottom" === journeys_utils.position && (document.body.style.marginBottom = (+f + e).toString() + "px"));
   0 < journeys_utils.divToInjectParents.length && journeys_utils.divToInjectParents.forEach(function(g) {
-    var h, k = window.getComputedStyle(g);
-    k && (h = journeys_utils.isFullPage && "fixed" === k.getPropertyValue("position"));
-    h || (g.style.marginTop = journeys_utils.bannerHeight);
+    var k, h = window.getComputedStyle(g);
+    h && (k = journeys_utils.isFullPage && "fixed" === h.getPropertyValue("position"));
+    k || (g.style.marginTop = journeys_utils.bannerHeight);
   });
   "top" === journeys_utils.previousPosition && journeys_utils.previousPosition !== journeys_utils.position && journeys_utils.exitAnimationDisabledPreviously && journeys_utils.previousDivToInjectParents && 0 < journeys_utils.previousDivToInjectParents.length && journeys_utils.previousDivToInjectParents.forEach(function(g) {
     g.style.marginTop = 0;
@@ -2493,28 +2504,28 @@ journeys_utils._findGlobalDismissPeriod = function(a) {
     return -1 === a ? !0 : journeys_utils._addSecondsToDate(a);
   }
 };
-journeys_utils.finalHookups = function(a, b, c, d, e, f, g, h) {
+journeys_utils.finalHookups = function(a, b, c, d, e, f, g, k) {
   if (d && e) {
-    var k = e.contentWindow.document.querySelectorAll("#branch-mobile-action");
-    Array.prototype.forEach.call(k, function(l) {
-      l.addEventListener("click", function(n) {
+    var h = e.contentWindow.document.querySelectorAll("#branch-mobile-action");
+    Array.prototype.forEach.call(h, function(l) {
+      l.addEventListener("click", function(m) {
         journeys_utils.branch._publishEvent("didClickJourneyCTA", journeys_utils.journeyLinkData);
         journeys_utils.journeyDismissed = !0;
         d();
         journeys_utils.animateBannerExit(e);
       });
     });
-    journeys_utils._setupDismissBehavior(".branch-banner-continue", "didClickJourneyContinue", c, e, a, b, f, g, h, "click");
-    journeys_utils._setupDismissBehavior(".branch-banner-close", "didClickJourneyClose", c, e, a, b, f, g, h, "click");
-    journeys_utils._setupDismissBehavior(".branch-banner-dismiss-background", "didClickJourneyBackgroundDismiss", c, e, a, b, f, g, h, "click");
-    journeys_utils._setupDismissBehavior(".branch-banner-dismiss-background", "didScrollJourneyBackgroundDismiss", c, e, a, b, f, g, h, "touchmove");
+    journeys_utils._setupDismissBehavior(".branch-banner-continue", "didClickJourneyContinue", c, e, a, b, f, g, k, "click");
+    journeys_utils._setupDismissBehavior(".branch-banner-close", "didClickJourneyClose", c, e, a, b, f, g, k, "click");
+    journeys_utils._setupDismissBehavior(".branch-banner-dismiss-background", "didClickJourneyBackgroundDismiss", c, e, a, b, f, g, k, "click");
+    journeys_utils._setupDismissBehavior(".branch-banner-dismiss-background", "didScrollJourneyBackgroundDismiss", c, e, a, b, f, g, k, "touchmove");
   }
 };
-journeys_utils._setupDismissBehavior = function(a, b, c, d, e, f, g, h, k, l) {
+journeys_utils._setupDismissBehavior = function(a, b, c, d, e, f, g, k, h, l) {
   a = d.contentWindow.document.querySelectorAll(a);
-  Array.prototype.forEach.call(a, function(n) {
-    n.addEventListener(l, function(q) {
-      journeys_utils._handleJourneyDismiss(b, c, d, e, f, g, h, k);
+  Array.prototype.forEach.call(a, function(m) {
+    m.addEventListener(l, function(q) {
+      journeys_utils._handleJourneyDismiss(b, c, d, e, f, g, k, h);
     });
   });
 };
@@ -2552,19 +2563,19 @@ journeys_utils._getDismissRequestData = function(a, b) {
   utils.addPropertyIfNotNull(a, "dismissal_source", b);
   return a;
 };
-journeys_utils._handleJourneyDismiss = function(a, b, c, d, e, f, g, h) {
-  var k = g ? 0 : journeys_utils._findGlobalDismissPeriod(f);
+journeys_utils._handleJourneyDismiss = function(a, b, c, d, e, f, g, k) {
+  var h = g ? 0 : journeys_utils._findGlobalDismissPeriod(f);
   journeys_utils.branch._publishEvent(a, journeys_utils.journeyLinkData);
   journeys_utils.journeyDismissed = !0;
   journeys_utils.animateBannerExit(c);
   if (!g) {
-    void 0 !== k && b.set("globalJourneysDismiss", k, !0);
+    void 0 !== h && b.set("globalJourneysDismiss", h, !0);
     journeys_utils._setJourneyDismiss(b, d, e);
     var l = function() {
       journeys_utils.branch.removeListener(l);
-      var n = journeys_utils._getDismissRequestData(h, utils.dismissEventToSourceMapping[a]);
-      journeys_utils.branch._api(resources.dismiss, n, function(q, r) {
-        !q && f && f.dismissRedirect ? window.location = f.dismissRedirect : !q && "object" === typeof r && r.template && h.shouldDisplayJourney(r, null, !1) && h.displayJourney(r.template, n, n.branch_view_id || r.event_data.branch_view_data.id, r.event_data.branch_view_data, !1, r.journey_link_data);
+      var m = journeys_utils._getDismissRequestData(k, utils.dismissEventToSourceMapping[a]);
+      journeys_utils.branch._api(resources.dismiss, m, function(q, r) {
+        !q && f && f.dismissRedirect ? window.location = f.dismissRedirect : !q && "object" === typeof r && r.template && k.shouldDisplayJourney(r, null, !1) && k.displayJourney(r.template, m, m.branch_view_id || r.event_data.branch_view_data.id, r.event_data.branch_view_data, !1, r.journey_link_data);
       });
     };
     journeys_utils.branch.addListener("branch_internal_event_didCloseJourney", l);
@@ -2646,8 +2657,8 @@ journeys_utils.trySetJourneyUrls = function(a, b = ["$android_url", "$ios_url", 
       if (f[g]) {
         return f;
       }
-      var h = journeys_utils.getBranchViewDataItemOrUndefined(g);
-      h && (f[g] = h);
+      var k = journeys_utils.getBranchViewDataItemOrUndefined(g);
+      k && (f[g] = k);
       return f;
     }, e);
   };
@@ -2671,20 +2682,20 @@ function renderHtmlBlob(a, b, c, d) {
   f && (e = journeys_utils.getCtaText(f, c), journeys_utils.findInsertionDiv(a, f));
   var g = journeys_utils.getCss(b);
   journeys_utils.getJsAndAddToParent(b);
-  var h = journeys_utils.getIframeCss(b);
+  var k = journeys_utils.getIframeCss(b);
   b = journeys_utils.removeScriptAndCss(b);
-  var k = journeys_utils.createIframe();
-  k.onload = function() {
-    journeys_utils.addHtmlToIframe(k, b, utils.mobileUserAgent());
-    journeys_utils.addIframeOuterCSS(h, f);
-    journeys_utils.addIframeInnerCSS(k, g);
-    journeys_utils.addDynamicCtaText(k, e);
+  var h = journeys_utils.createIframe();
+  h.onload = function() {
+    journeys_utils.addHtmlToIframe(h, b, utils.mobileUserAgent());
+    journeys_utils.addIframeOuterCSS(k, f);
+    journeys_utils.addIframeInnerCSS(h, g);
+    journeys_utils.addDynamicCtaText(h, e);
     journeys_utils.branch._publishEvent("willShowJourney", journeys_utils.journeyLinkData);
-    journeys_utils.animateBannerEntrance(k, h);
-    d(k);
+    journeys_utils.animateBannerEntrance(h, k);
+    d(h);
   };
-  document.body.appendChild(k);
-  return k;
+  document.body.appendChild(h);
+  return h;
 }
 function _areJourneysDismissedGlobally(a) {
   var b = a._storage.get("globalJourneysDismiss", !0);
@@ -2711,11 +2722,11 @@ branch_view.displayJourney = function(a, b, c, d, e, f) {
     journeys_utils.setJourneyLinkData(f);
     var g = d.audience_rule_id;
     (f = document.getElementById("branch-iframe-css")) && f.parentElement.removeChild(f);
-    var h = document.createElement("div");
-    h.id = "branch-banner";
-    document.body.insertBefore(h, null);
-    banner_utils.addClass(h, "branch-banner-is-active");
-    var k = !1, l = b.callback_string, n = null, q = journeys_utils.branch._storage;
+    var k = document.createElement("div");
+    k.id = "branch-banner";
+    document.body.insertBefore(k, null);
+    banner_utils.addClass(k, "branch-banner-is-active");
+    var h = !1, l = b.callback_string, m = null, q = journeys_utils.branch._storage;
     if (a) {
       var r = journeys_utils.getMetadata(a) || {};
       a = journeys_utils.tryReplaceJourneyCtaLink(a);
@@ -2723,16 +2734,16 @@ branch_view.displayJourney = function(a, b, c, d, e, f) {
         window[l] = function() {
         };
       }, utils.timeout);
-      window[l] = function(m) {
+      window[l] = function(n) {
         window.clearTimeout(w);
-        k || (n = m, journeys_utils.finalHookups(c, g, q, n, null, r, e, branch_view));
+        h || (m = n, journeys_utils.finalHookups(c, g, q, m, null, r, e, branch_view));
       };
-      renderHtmlBlob(document.body, a, b.has_app_websdk, function(m) {
-        journeys_utils.banner = m;
-        null === m ? k = !0 : (journeys_utils.finalHookups(c, g, q, n, m, r, e, branch_view), utils.navigationTimingAPIEnabled && (utils.instrumentation["journey-load-time"] = utils.timeSinceNavigationStart()), document.body.removeChild(h), utils.userPreferences.trackingDisabled || e || branch_view.incrementPageviewAnalytics(d));
+      renderHtmlBlob(document.body, a, b.has_app_websdk, function(n) {
+        journeys_utils.banner = n;
+        null === n ? h = !0 : (journeys_utils.finalHookups(c, g, q, m, n, r, e, branch_view), utils.navigationTimingAPIEnabled && (utils.instrumentation["journey-load-time"] = utils.timeSinceNavigationStart()), document.body.removeChild(k), utils.userPreferences.trackingDisabled || e || branch_view.incrementPageviewAnalytics(d));
       });
     } else {
-      document.body.removeChild(h), utils.userPreferences.trackingDisabled || e || branch_view.incrementPageviewAnalytics(d);
+      document.body.removeChild(k), utils.userPreferences.trackingDisabled || e || branch_view.incrementPageviewAnalytics(d);
     }
   }
 };
@@ -2742,16 +2753,16 @@ branch_view._getPageviewRequestData = function(a, b, c, d) {
   a || (a = {});
   journeys_utils.entryAnimationDisabled = b.disable_entry_animation || !1;
   journeys_utils.exitAnimationDisabled = b.disable_exit_animation || !1;
-  var e = utils.merge({}, c._branchViewData), f = session.get(c._storage) || {}, g = f.hasOwnProperty("has_app") ? f.has_app : !1, h = f.hasOwnProperty("identity") ? f.identity : null, k = c._storage.get("journeyDismissals", !0), l = (b.user_language || utils.getBrowserLanguageCode() || "en").toLowerCase() || null, n = utils.getInitialReferrer(c._referringLink()), q = b.branch_view_id || utils.getParameterByName("_branch_view_id") || null;
+  var e = utils.merge({}, c._branchViewData), f = session.get(c._storage) || {}, g = f.hasOwnProperty("has_app") ? f.has_app : !1, k = f.hasOwnProperty("identity") ? f.identity : null, h = c._storage.get("journeyDismissals", !0), l = (b.user_language || utils.getBrowserLanguageCode() || "en").toLowerCase() || null, m = utils.getInitialReferrer(c._referringLink()), q = b.branch_view_id || utils.getParameterByName("_branch_view_id") || null;
   c = b.make_new_link ? null : utils.getClickIdAndSearchStringFromLink(c._referringLink(!0));
   e.event = d ? "dismiss" : "pageview";
   e.metadata = a;
-  e = utils.addPropertyIfNotNull(e, "initial_referrer", n);
+  e = utils.addPropertyIfNotNull(e, "initial_referrer", m);
   e = utils.addPropertyIfNotNull(e, "branch_view_id", q);
   e = utils.addPropertyIfNotNull(e, "no_journeys", b.no_journeys);
   e = utils.addPropertyIfNotNull(e, "is_iframe", utils.isIframe());
-  e = utils.addPropertyIfNotNull(e, "journey_dismissals", k);
-  e = utils.addPropertyIfNotNull(e, "identity", h);
+  e = utils.addPropertyIfNotNull(e, "journey_dismissals", h);
+  e = utils.addPropertyIfNotNull(e, "identity", k);
   e.user_language = l;
   e.open_app = b.open_app || !1;
   e.has_app_websdk = g;
@@ -2769,35 +2780,35 @@ var default_branch, callback_params = {NO_CALLBACK:0, CALLBACK_ERR:1, CALLBACK_E
   return function() {
     var d = this, e = arguments[arguments.length - 1];
     if (a === callback_params.NO_CALLBACK || "function" !== typeof e) {
-      var f = function(h) {
+      var f = function(k) {
       };
       var g = Array.prototype.slice.call(arguments);
     } else {
       g = Array.prototype.slice.call(arguments, 0, arguments.length - 1) || [], f = e;
     }
-    d._queue(function(h) {
-      var k = function(l, n) {
+    d._queue(function(k) {
+      var h = function(l, m) {
         try {
           if (l && a === callback_params.NO_CALLBACK) {
             throw l;
           }
-          a === callback_params.CALLBACK_ERR ? f(l) : a === callback_params.CALLBACK_ERR_DATA && f(l, n);
+          a === callback_params.CALLBACK_ERR ? f(l) : a === callback_params.CALLBACK_ERR_DATA && f(l, m);
         } finally {
-          h();
+          k();
         }
       };
       if (!c) {
         if (d.init_state === init_states.INIT_PENDING) {
-          return k(Error(utils.message(utils.messages.initPending)), null);
+          return h(Error(utils.message(utils.messages.initPending)), null);
         }
         if (d.init_state === init_states.INIT_FAILED) {
-          return k(Error(utils.message(utils.messages.initFailed, d.init_state_fail_code, d.init_state_fail_details)), null);
+          return h(Error(utils.message(utils.messages.initFailed, d.init_state_fail_code, d.init_state_fail_details)), null);
         }
         if (d.init_state === init_states.NO_INIT || !d.init_state) {
-          return k(Error(utils.message(utils.messages.nonInit)), null);
+          return h(Error(utils.message(utils.messages.nonInit)), null);
         }
       }
-      g.unshift(k);
+      g.unshift(h);
       b.apply(d, g);
     });
   };
@@ -2867,64 +2878,68 @@ Branch.prototype.init = wrap(callback_params.CALLBACK_ERR_DATA, function(a, b, c
   utils.userPreferences.trackingDisabled && utils.cleanApplicationAndSessionStorage(d);
   b = session.get(d._storage, !0);
   d.identity_id = b && b.identity_id;
-  var e = function(m) {
-    m.link_click_id && (d.link_click_id = m.link_click_id.toString());
-    m.session_id && (d.session_id = m.session_id.toString());
-    m.identity_id && (d.identity_id = m.identity_id.toString());
-    m.identity && (d.identity = m.identity.toString());
-    m.link && (d.sessionLink = m.link);
-    m.referring_link && (m.referring_link = utils.processReferringLink(m.referring_link));
-    !m.click_id && m.referring_link && (m.click_id = utils.getClickIdAndSearchStringFromLink(m.referring_link));
-    d.browser_fingerprint_id = m.browser_fingerprint_id;
-    return m;
+  var e = function(n) {
+    n.link_click_id && (d.link_click_id = n.link_click_id.toString());
+    n.session_id && (d.session_id = n.session_id.toString());
+    n.identity_id && (d.identity_id = n.identity_id.toString());
+    n.identity && (d.identity = n.identity.toString());
+    n.link && (d.sessionLink = n.link);
+    n.referring_link && (n.referring_link = utils.processReferringLink(n.referring_link));
+    !n.click_id && n.referring_link && (n.click_id = utils.getClickIdAndSearchStringFromLink(n.referring_link));
+    d.browser_fingerprint_id = n.browser_fingerprint_id;
+    return n;
   };
   b = session.get(d._storage);
-  var f = c && "undefined" !== typeof c.branch_match_id && null !== c.branch_match_id ? c.branch_match_id : null, g = f || utils.getParamValue("_branch_match_id") || utils.hashValue("r"), h = !d.identity_id;
+  var f = c && "undefined" !== typeof c.branch_match_id && null !== c.branch_match_id ? c.branch_match_id : null, g = f || utils.getParamValue("_branch_match_id") || utils.hashValue("r"), k = !d.identity_id;
   d._branchViewEnabled = !!d._storage.get("branch_view_enabled");
-  var k = function(m) {
-    var p = {sdk:config.version, branch_key:d.branch_key}, u = session.get(d._storage) || {}, t = session.get(d._storage, !0) || {};
-    t.browser_fingerprint_id && (p._t = t.browser_fingerprint_id);
+  var h = function(n) {
+    var p = {sdk:config.version, branch_key:d.branch_key}, t = session.get(d._storage) || {}, u = session.get(d._storage, !0) || {};
+    u.browser_fingerprint_id && (p._t = u.browser_fingerprint_id);
     utils.isSafari11OrGreater() || utils.isIOSWKWebView() || d._api(resources._r, p, function(v, x) {
       v && (d.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND, d.init_state_fail_details = v.message);
-      x && (u.browser_fingerprint_id = x);
+      x && (t.browser_fingerprint_id = x);
     });
-    m && m(null, u);
-  }, l = function(m) {
-    h && (m.identity = d.identity);
-    return m;
-  }, n = function(m, p) {
-    p && (p = e(p), utils.userPreferences.trackingDisabled || (p = l(p), session.set(d._storage, p, h)), d.init_state = init_states.INIT_SUCCEEDED, p.data_parsed = p.data && 0 !== p.data.length ? safejson.parse(p.data) : {});
-    if (m) {
-      return d.init_state = init_states.INIT_FAILED, d.init_state_fail_code || (d.init_state_fail_code = init_state_fail_codes.UNKNOWN_CAUSE, d.init_state_fail_details = m.message), a(m, p && utils.whiteListSessionData(p));
+    d._api(resources.hasApp, {browser_fingerprint_id:t.browser_fingerprint_id}, function(v, x) {
+      v && (d.init_state_fail_code = init_state_fail_codes.HAS_APP_FAILED, d.init_state_fail_details = v.message);
+      v || !x || t.has_app || (t.has_app = !0, session.update(d._storage, t), d._publishEvent("didDownloadApp"));
+      n && n(null, t);
+    });
+  }, l = function(n) {
+    k && (n.identity = d.identity);
+    return n;
+  }, m = function(n, p) {
+    p && (p = e(p), utils.userPreferences.trackingDisabled || (p = l(p), session.set(d._storage, p, k)), d.init_state = init_states.INIT_SUCCEEDED, p.data_parsed = p.data && 0 !== p.data.length ? safejson.parse(p.data) : {});
+    if (n) {
+      return d.init_state = init_states.INIT_FAILED, d.init_state_fail_code || (d.init_state_fail_code = init_state_fail_codes.UNKNOWN_CAUSE, d.init_state_fail_details = n.message), a(n, p && utils.whiteListSessionData(p));
     }
     try {
-      a(m, p && utils.whiteListSessionData(p));
-    } catch (t) {
+      a(n, p && utils.whiteListSessionData(p));
+    } catch (u) {
     } finally {
       d.renderFinalize();
     }
-    m = utils.getAdditionalMetadata();
-    (p = utils.validateParameterType(c.metadata, "object") ? c.metadata : null) && (p = utils.mergeHostedDeeplinkData(m.hosted_deeplink_data, p)) && 0 < Object.keys(p).length && (m.hosted_deeplink_data = p);
-    var u = branch_view._getPageviewRequestData(journeys_utils._getPageviewMetadata(c, m), c, d, !1);
+    n = utils.getAdditionalMetadata();
+    (p = utils.validateParameterType(c.metadata, "object") ? c.metadata : null) && (p = utils.mergeHostedDeeplinkData(n.hosted_deeplink_data, p)) && 0 < Object.keys(p).length && (n.hosted_deeplink_data = p);
+    var t = branch_view._getPageviewRequestData(journeys_utils._getPageviewMetadata(c, n), c, d, !1);
     d.renderQueue(function() {
-      d._api(resources.pageview, u, function(t, v) {
-        t || "object" !== typeof v || (t = u.branch_view_id ? !0 : !1, branch_view.shouldDisplayJourney(v, c, t) ? branch_view.displayJourney(v.template, u, u.branch_view_id || v.event_data.branch_view_data.id, v.event_data.branch_view_data, t, v.journey_link_data) : ((v.auto_branchify || !f && utils.getParamValue("branchify_url") && d._referringLink()) && this.branch.deepview({}, {make_new_link:!1, open_app:!0, auto_branchify:!0}), journeys_utils.branch._publishEvent("willNotShowJourney")));
+      d._api(resources.pageview, t, function(u, v) {
+        u || "object" !== typeof v || (u = t.branch_view_id ? !0 : !1, branch_view.shouldDisplayJourney(v, c, u) ? branch_view.displayJourney(v.template, t, t.branch_view_id || v.event_data.branch_view_data.id, v.event_data.branch_view_data, u, v.journey_link_data) : ((v.auto_branchify || !f && utils.getParamValue("branchify_url") && d._referringLink()) && this.branch.deepview({}, {make_new_link:!1, open_app:!0, auto_branchify:!0}), journeys_utils.branch._publishEvent("willNotShowJourney")));
         utils.userPreferences.trackingDisabled && (utils.userPreferences.allowErrorsInCallback = !0);
       });
     });
   }, q = function() {
     if ("undefined" !== typeof document.hidden) {
-      var m = "hidden";
+      var n = "hidden";
       var p = "visibilitychange";
     } else {
-      "undefined" !== typeof document.mozHidden ? (m = "mozHidden", p = "mozvisibilitychange") : "undefined" !== typeof document.msHidden ? (m = "msHidden", p = "msvisibilitychange") : "undefined" !== typeof document.webkitHidden && (m = "webkitHidden", p = "webkitvisibilitychange");
+      "undefined" !== typeof document.mozHidden ? (n = "mozHidden", p = "mozvisibilitychange") : "undefined" !== typeof document.msHidden ? (n = "msHidden", p = "msvisibilitychange") : "undefined" !== typeof document.webkitHidden && (n = "webkitHidden", p = "webkitvisibilitychange");
     }
     p && !d.changeEventListenerAdded && (d.changeEventListenerAdded = !0, document.addEventListener(p, function() {
-      document[m] || (k(null), "function" === typeof d._deepviewRequestForReplay && d._deepviewRequestForReplay());
+      document[n] || (h(null), "function" === typeof d._deepviewRequestForReplay && d._deepviewRequestForReplay());
     }, !1));
   };
   if (b && b.session_id && !g && !utils.getParamValue("branchify_url")) {
-    session.update(d._storage, {data:""}), session.update(d._storage, {referring_link:""}), q(), k(n);
+    session.update(d._storage, {data:""}), session.update(d._storage, {referring_link:""}), q(), h(m);
   } else {
     b = {sdk:config.version, branch_key:d.branch_key};
     var r = session.get(d._storage, !0) || {};
@@ -2932,23 +2947,23 @@ Branch.prototype.init = wrap(callback_params.CALLBACK_ERR_DATA, function(a, b, c
     r.identity && (d.identity = r.identity);
     var w = parseInt(utils.getParamValue("[?&]_open_delay_ms"), 10);
     utils.isSafari11OrGreater() || utils.isIOSWKWebView() ? utils.delay(function() {
-      d._api(resources.open, {link_identifier:g, browser_fingerprint_id:g || r.browser_fingerprint_id, alternative_browser_fingerprint_id:r.browser_fingerprint_id, options:c, initial_referrer:utils.getInitialReferrer(d._referringLink()), current_url:utils.getCurrentUrl(), screen_height:utils.getScreenHeight(), screen_width:utils.getScreenWidth(), model:utils.userAgentData ? utils.userAgentData.model : null, os_version:utils.userAgentData ? utils.userAgentData.platformVersion : null}, function(m, 
+      d._api(resources.open, {link_identifier:g, browser_fingerprint_id:g || r.browser_fingerprint_id, alternative_browser_fingerprint_id:r.browser_fingerprint_id, options:c, initial_referrer:utils.getInitialReferrer(d._referringLink()), current_url:utils.getCurrentUrl(), screen_height:utils.getScreenHeight(), screen_width:utils.getScreenWidth(), model:utils.userAgentData ? utils.userAgentData.model : null, os_version:utils.userAgentData ? utils.userAgentData.platformVersion : null}, function(n, 
       p) {
-        m && (d.init_state_fail_code = init_state_fail_codes.OPEN_FAILED, d.init_state_fail_details = m.message);
-        m || "object" !== typeof p || (p.branch_view_enabled && (d._branchViewEnabled = !!p.branch_view_enabled, d._storage.set("branch_view_enabled", d._branchViewEnabled)), g && (p.click_id = g));
+        n && (d.init_state_fail_code = init_state_fail_codes.OPEN_FAILED, d.init_state_fail_details = n.message);
+        n || "object" !== typeof p || (p.branch_view_enabled && (d._branchViewEnabled = !!p.branch_view_enabled, d._storage.set("branch_view_enabled", d._branchViewEnabled)), g && (p.click_id = g));
         q();
-        n(m, p);
+        m(n, p);
       });
-    }, w) : d._api(resources._r, b, function(m, p) {
-      if (m) {
-        return d.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND, d.init_state_fail_details = m.message, n(m, null);
+    }, w) : d._api(resources._r, b, function(n, p) {
+      if (n) {
+        return d.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND, d.init_state_fail_details = n.message, m(n, null);
       }
       utils.delay(function() {
-        d._api(resources.open, {link_identifier:g, browser_fingerprint_id:g || p, alternative_browser_fingerprint_id:r.browser_fingerprint_id, options:c, initial_referrer:utils.getInitialReferrer(d._referringLink()), current_url:utils.getCurrentUrl(), screen_height:utils.getScreenHeight(), screen_width:utils.getScreenWidth(), model:utils.userAgentData ? utils.userAgentData.model : null, os_version:utils.userAgentData ? utils.userAgentData.platformVersion : null}, function(u, t) {
-          u && (d.init_state_fail_code = init_state_fail_codes.OPEN_FAILED, d.init_state_fail_details = u.message);
-          u || "object" !== typeof t || (t.branch_view_enabled && (d._branchViewEnabled = !!t.branch_view_enabled, d._storage.set("branch_view_enabled", d._branchViewEnabled)), g && (t.click_id = g));
+        d._api(resources.open, {link_identifier:g, browser_fingerprint_id:g || p, alternative_browser_fingerprint_id:r.browser_fingerprint_id, options:c, initial_referrer:utils.getInitialReferrer(d._referringLink()), current_url:utils.getCurrentUrl(), screen_height:utils.getScreenHeight(), screen_width:utils.getScreenWidth(), model:utils.userAgentData ? utils.userAgentData.model : null, os_version:utils.userAgentData ? utils.userAgentData.platformVersion : null}, function(t, u) {
+          t && (d.init_state_fail_code = init_state_fail_codes.OPEN_FAILED, d.init_state_fail_details = t.message);
+          t || "object" !== typeof u || (u.branch_view_enabled && (d._branchViewEnabled = !!u.branch_view_enabled, d._storage.set("branch_view_enabled", d._branchViewEnabled)), g && (u.click_id = g));
           q();
-          n(u, t);
+          m(t, u);
         });
       }, w);
     });
@@ -3028,8 +3043,8 @@ Branch.prototype.track = wrap(callback_params.CALLBACK_ERR, function(a, b, c, d)
     var e = branch_view._getPageviewRequestData(journeys_utils._getPageviewMetadata(d, c), d, this, !1);
     this._api(resources.pageview, e, function(f, g) {
       if (!f && "object" === typeof g) {
-        var h = e.branch_view_id ? !0 : !1;
-        branch_view.shouldDisplayJourney(g, d, h) ? branch_view.displayJourney(g.template, e, e.branch_view_id || g.event_data.branch_view_data.id, g.event_data.branch_view_data, h, g.journey_link_data) : journeys_utils.branch._publishEvent("willNotShowJourney");
+        var k = e.branch_view_id ? !0 : !1;
+        branch_view.shouldDisplayJourney(g, d, k) ? branch_view.displayJourney(g.template, e, e.branch_view_id || g.event_data.branch_view_data.id, g.event_data.branch_view_data, k, g.journey_link_data) : journeys_utils.branch._publishEvent("willNotShowJourney");
       }
       "function" === typeof a && a.apply(this, arguments);
     });
@@ -3091,13 +3106,13 @@ Branch.prototype.deepview = wrap(callback_params.CALLBACK_ERR, function(a, b, c)
   f && !c.make_new_link && (b.link_click_id = utils.getClickIdAndSearchStringFromLink(f));
   b.banner_options = c;
   c.auto_branchify && (b.auto_branchify = !0);
-  d._deepviewRequestForReplay = goog.bind(this._api, d, resources.deepview, b, function(g, h) {
+  d._deepviewRequestForReplay = goog.bind(this._api, d, resources.deepview, b, function(g, k) {
     if (g) {
       return utils.userPreferences.trackingDisabled || (d._deepviewCta = function() {
         d._windowRedirect(e);
       }), a(g);
     }
-    "function" === typeof h && (d._deepviewCta = h);
+    "function" === typeof k && (d._deepviewCta = k);
     a(null);
   });
   d._deepviewRequestForReplay();
@@ -3209,7 +3224,7 @@ Branch.prototype.trackCommerceEvent = wrap(callback_params.CALLBACK_ERR, functio
     if (f) {
       return a(Error(f));
     }
-    e._api(resources.commerceEvent, {event:b, metadata:utils.merge({url:document.URL, user_agent:navigator.userAgent, language:navigator.language}, d || {}), initial_referrer:utils.getInitialReferrer(e._referringLink()), commerce_data:c}, function(g, h) {
+    e._api(resources.commerceEvent, {event:b, metadata:utils.merge({url:document.URL, user_agent:navigator.userAgent, language:navigator.language}, d || {}), initial_referrer:utils.getInitialReferrer(e._referringLink()), commerce_data:c}, function(g, k) {
       a(g || null);
     });
   });
