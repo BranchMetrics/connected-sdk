@@ -14,7 +14,7 @@
   * @class Server
   * @constructor
   */
- var Server = function() { };
+Server = function() { };
 
  Server.prototype._jsonp_callback_index = 0;
 
@@ -92,17 +92,6 @@
 		}
 	};
 
-	if (resource.endpoint === '/v1/has-app') {
-		try {
-			resource.queryPart = appendKeyOrId(data, resource.queryPart);
-		}
-		catch (e) {
-			return {
-				error: e.message
-			};
-		}
-	}
-
 	if (typeof resource.queryPart !== 'undefined') {
 		for (k in resource.queryPart) {
 			if (!resource.queryPart.hasOwnProperty(k)) {
@@ -135,6 +124,9 @@
 				}
 			}
 		}
+	}
+	if (data.hasOwnProperty("branch_requestMetadata") && data["branch_requestMetadata"] && !(resource.endpoint === '/v1/pageview' || resource.endpoint === '/v1/dismiss')) {
+		d['metadata'] = safejson.stringify(data["branch_requestMetadata"]);
 	}
 
 	if (resource.method === 'POST') {
@@ -354,7 +346,7 @@
 
 	// Removes PII from request data in case fields flow in from cascading requests
 	if (utils.userPreferences.trackingDisabled) {
-		var PII = [ 'randomized_device_token', 'randomized_bundle_token', 'session_id', 'identity' ];
+		var PII = [ 'browser_fingerprint_id', 'alternative_browser_fingerprint_id', 'identity_id', 'session_id', 'identity' ];
 		for (var index = 0; index < PII.length; index++) {
 			if (data.hasOwnProperty(PII[index])) {
 				delete data[PII[index]];
@@ -433,7 +425,7 @@
 		noParseJsonResp = true;
 		responseType = "arraybuffer";
 	}
-
+	/* jshint -W003 */
 	var makeRequest = function() {
 		if (storage.get('use_jsonp') || resource.jsonp) {
 			self.jsonpRequest(url, data, resource.method, done);
@@ -442,5 +434,6 @@
 			self.XHRRequest(url, postData, resource.method, storage, done, noParseJsonResp, responseType);
 		}
 	};
+	/* jshint +W003 */
 	makeRequest();
  };

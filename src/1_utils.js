@@ -1,3 +1,4 @@
+// jshint esversion: 6
 /**
  * Just provides a couple of utilities.
  */
@@ -21,6 +22,7 @@ utils.timeout = 5000; // Duration in milliseconds that the system should wait fo
 utils.nonce = ''; // Nonce value to allow for CSP whitelisting
 
 // Properties and function related to calculating Branch request roundtrip time
+utils.userAgentData = null;
 utils.instrumentation = {};
 utils.navigationTimingAPIEnabled = typeof window !== 'undefined' && !!(window.performance && window.performance.timing && window.performance.timing.navigationStart);
 utils.timeSinceNavigationStart = function() {
@@ -67,12 +69,6 @@ utils.userPreferences = {
 		// a leading slash is available eg. v1/open on IE vs. /v1/open in Chrome
 		if (urlPath[0] != '/') {
 			urlPath = '/' + urlPath;
-		}
-
-		// INTENG-11512
-		// To allow SMS when tracking disabled, we must allow POST https://bnc.lt/c/<whatever>
-		if (urlPath.startsWith('/c/')) {
-			return false;
 		}
 
 		var whiteListedEndpointWithData = utils.userPreferences.whiteListedEndpointsWithData[urlPath];
@@ -136,9 +132,9 @@ utils.cleanApplicationAndSessionStorage = function(branch) {
 		branch.device_fingerprint_id = null;
 		branch.sessionLink = null;
 		branch.session_id = null;
-		branch.randomized_bundle_token = null;
+		branch.identity_id = null;
 		branch.identity = null;
-		branch.randomized_device_token = null;
+		branch.browser_fingerprint_id = null;
 		branch._storage.remove('branch_view_enabled');
 		var data = {};
 		// Sets an empty object for branch_session and branch_session_first in local/sessionStorage
@@ -188,7 +184,8 @@ utils.messages = {
 	timeout: 'Request timed out',
 	blockedByClient: 'Request blocked by client, probably adblock',
 	missingUrl: 'Required argument: URL, is missing',
-	trackingDisabled: 'Requested operation cannot be completed since tracking is disabled'
+	trackingDisabled: 'Requested operation cannot be completed since tracking is disabled',
+	missingIdentity: 'setIdentity - required argument identity should have a non-null value'
 };
 
 /*
@@ -285,25 +282,25 @@ utils.cleanLinkData = function(linkData) {
 			data = {};
 			break;
 	}
+	var hasOGRedirectOrFallback = data['$og_redirect'] || data['$fallback_url'] || data['$desktop_url'];
 
 	if (!data['$canonical_url']) {
 		data['$canonical_url'] = utils.getWindowLocation();
 	}
 	if (!data['$og_title']) {
-		data['$og_title'] = utils.getOpenGraphContent('title');
+		data['$og_title'] = hasOGRedirectOrFallback ? null : utils.getOpenGraphContent('title');
 	}
 	if (!data['$og_description']) {
-		data['$og_description'] = utils.getOpenGraphContent('description');
+		data['$og_description'] = hasOGRedirectOrFallback ? null : utils.getOpenGraphContent('description');
 	}
 	if (!data['$og_image_url']) {
-		data['$og_image_url'] = utils.getOpenGraphContent('image');
+		data['$og_image_url'] = hasOGRedirectOrFallback ? null : utils.getOpenGraphContent('image');
 	}
 	if (!data['$og_video']) {
-		data['$og_video'] = utils.getOpenGraphContent('video');
+		data['$og_video'] = hasOGRedirectOrFallback ? null : utils.getOpenGraphContent('video');
 	}
-
 	if (!data['$og_type']) {
-		data['$og_type'] = utils.getOpenGraphContent('type');
+		data['$og_type'] = hasOGRedirectOrFallback ? null : utils.getOpenGraphContent('type');
 	}
 
 	if (typeof data['$desktop_url'] === 'string') {
@@ -446,7 +443,7 @@ function isIOS(ua) {
 	return ua && /(iPad|iPod|iPhone)/.test(ua);
 }
 
-utils.mobileUserAgent = function() {
+utils.getPlatformByUserAgent = function() {
 	var ua = navigator.userAgent;
 	if (ua.match(/android/i)) {
 		return 'android';
@@ -479,7 +476,10 @@ utils.mobileUserAgent = function() {
 	) {
 		return "kindle";
 	}
-	return false;
+	if (ua.match(/(Windows|Macintosh|Linux)/i)) {
+		return 'desktop';
+	}
+	return "other";
 };
 
 /**
@@ -647,9 +647,13 @@ utils.isBase64Encoded = function(str) {
  * @param {Object} data
  */
 utils.encodeBFPs = function(data) {
-	if (data && data["randomized_device_token"] &&
-		!utils.isBase64Encoded(data["randomized_device_token"])) {
-		data["randomized_device_token"] = btoa(data["randomized_device_token"]);
+	if (data && data["browser_fingerprint_id"] &&
+		!utils.isBase64Encoded(data["browser_fingerprint_id"])) {
+		data["browser_fingerprint_id"] = btoa(data["browser_fingerprint_id"]);
+	}
+	if (data && data["alternative_browser_fingerprint_id"] &&
+		!utils.isBase64Encoded(data["alternative_browser_fingerprint_id"])) {
+		data["alternative_browser_fingerprint_id"] = btoa(data["alternative_browser_fingerprint_id"]);
 	}
 	return data;
 };
@@ -660,8 +664,11 @@ utils.encodeBFPs = function(data) {
  * @param {Object} data
  */
 utils.decodeBFPs = function(data) {
-	if (data && utils.isBase64Encoded(data["randomized_device_token"])) {
-		data["randomized_device_token"] = atob(data["randomized_device_token"]);
+	if (data && utils.isBase64Encoded(data["browser_fingerprint_id"])) {
+		data["browser_fingerprint_id"] = atob(data["browser_fingerprint_id"]);
+	}
+	if (data && utils.isBase64Encoded(data["alternative_browser_fingerprint_id"])) {
+		data["alternative_browser_fingerprint_id"] = atob(data["alternative_browser_fingerprint_id"]);
 	}
 	return data;
 };
@@ -1006,11 +1013,13 @@ utils.getUserData = function(branch) {
 	user_data = utils.addPropertyIfNotNull(user_data, "screen_width", utils.getScreenWidth());
 	user_data = utils.addPropertyIfNotNull(user_data, "screen_height", utils.getScreenHeight());
 	user_data = utils.addPropertyIfNotNull(user_data, "http_referrer", document.referrer);
-	user_data = utils.addPropertyIfNotNull(user_data, "randomized_device_token", branch.randomized_device_token);
+	user_data = utils.addPropertyIfNotNull(user_data, "browser_fingerprint_id", branch.browser_fingerprint_id);
 	user_data = utils.addPropertyIfNotNull(user_data, "developer_identity", branch.identity);
 	user_data = utils.addPropertyIfNotNull(user_data, "identity", branch.identity);
-	user_data = utils.addPropertyIfNotNull(user_data, "sdk", config.sdk);
+	user_data = utils.addPropertyIfNotNull(user_data, "sdk", "web");
 	user_data = utils.addPropertyIfNotNull(user_data, "sdk_version", config.version);
+	user_data = utils.addPropertyIfNotNullorEmpty(user_data, "model", utils.userAgentData ? utils.userAgentData.model : "");
+	user_data = utils.addPropertyIfNotNullorEmpty(user_data, "os_version", utils.userAgentData ? utils.userAgentData.platformVersion : "");
 	return user_data;
 };
 
@@ -1117,6 +1126,54 @@ utils.delay = function(operation, delay) {
 	}
 
 	setTimeout(operation, delay);
+};
+
+/**
+ * gets client hints for supported browsers.
+ * This will be used for browsers that have reduced user agent
+ */
+utils.getClientHints = function() {
+	if (navigator.userAgentData) {
+		var hints = [
+			'model',
+			'platformVersion'
+		];
+		navigator.userAgentData.getHighEntropyValues(hints).then(function(data) {
+			utils.userAgentData = { 'model': data.model, 'platformVersion': utils.removeTrailingDotZeros(data.platformVersion) };
+		});
+	}
+	else {
+		utils.userAgentData = null;
+	}
+};
+
+/**
+ * @param {Object} obj
+ * @param {string} key
+ * @param {string} value
+ * A utility function to add a property to an object only if its value is not null, empty
+ */
+utils.addPropertyIfNotNullorEmpty = function(obj, key, value) {
+	if (typeof value === "string" && !!value) {
+		obj[key] = value;
+	}
+	return obj;
+};
+
+/**
+ * @param {String} versionNumber
+ * A utility function to remove trailing dot zeroes
+ */
+utils.removeTrailingDotZeros = function(versionNumber) {
+	if (!!versionNumber) {
+		var dotZeroRegex = /^([1-9]\d*)\.(0\d*)(\.[0]\d*){1,}$/;
+
+		if (versionNumber.indexOf(".") !== -1) {
+			var dotString = versionNumber.substring(0, versionNumber.indexOf("."));
+			versionNumber = versionNumber.replace(dotZeroRegex, dotString);
+		}
+	}
+	return versionNumber;
 };
 
 /**

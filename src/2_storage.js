@@ -17,13 +17,12 @@ var BRANCH_KEY_PREFIX = 'BRANCH_CONNECTEDSDK_KEY';
 
 /** @typedef {undefined|{get:function(string, boolean=), set:function(string, (string|boolean), boolean=),
  * remove:function(string), clear:function(), isEnabled:function()}} */
-var storage;
 
 /**
  * @class BranchStorage
  * @constructor
  */
-var BranchStorage = function(storageMethods) {
+storage.BranchStorage = function(storageMethods) {
 	for (var i = 0; i < storageMethods.length; i++) {
 		var storageMethod = this[storageMethods[i]];
 		storageMethod = (typeof storageMethod === 'function') ? storageMethod() : storageMethod;
@@ -101,8 +100,8 @@ var webStorage = function(perm) {
 			return utils.decodeBFPs(allKeyValues);
 		},
 		get: function(key, perm_override) {
-			// Make sure that randomized_device_token gets decoded every time it is accessed.
-			if (key === 'randomized_device_token') {
+			// Make sure that browser_fingerprint_id gets decoded every time it is accessed.
+			if (key === 'browser_fingerprint_id' || key === "alternative_browser_fingerprint_id") {
 				return perm_override && localStorage ?
 					utils.base64Decode(localStorage.getItem(prefix(key))) :
 					utils.base64Decode(storageMethod.getItem(prefix(key)));
@@ -150,12 +149,12 @@ var webStorage = function(perm) {
 };
 
 /** @type {storage} */
-BranchStorage.prototype['local'] = function() {
+storage.BranchStorage.prototype['local'] = function() {
 	return webStorage(true);
 };
 
 /** @type {storage} */
-BranchStorage.prototype['session'] = function() {
+storage.BranchStorage.prototype['session'] = function() {
 	return webStorage(false);
 };
 
@@ -214,12 +213,12 @@ var cookies = function() {
 	};
 };
 
-BranchStorage.prototype['cookie'] = function() {
+storage.BranchStorage.prototype['cookie'] = function() {
 	return cookies();
 };
 
 /** @type {storage} */
-BranchStorage.prototype['pojo'] = {
+storage.BranchStorage.prototype['pojo'] = {
 	getAll: function() {
 		return this._store;
 	},

@@ -302,6 +302,14 @@ describe('utils', function() {
 				'Expected Missing url message produced'
 			);
 		});
+
+		it('should produce a missing identity error', function() {
+			assert.strictEqual(
+				utils.message(utils.messages.missingIdentity),
+				'setIdentity - required argument identity should have a non-null value',
+				'Expected Missing identity message produced'
+			);
+		});
 	});
 
 	describe('getParamValue', function() {
@@ -979,23 +987,20 @@ describe('utils', function() {
 		});
 	});
 	describe('Tests for utils.userPreferences.shouldBlockRequest()', function() {
-		it.skip('should return true with v1/bogus as url endpoint', function() {
-			assert.strictEqual(true, utils.userPreferences.shouldBlockRequest('https://api.branch.io/v1/bogus'));
+		it('should return true with v1/bogus as url endpoint', function() {
+			assert.strictEqual(true, utils.userPreferences.shouldBlockRequest('https://api2.branch.io/v1/bogus'));
 		});
-		it.skip('should return true with v1/open as url endpoint and no request data provided', function() {
-			assert.strictEqual(true, utils.userPreferences.shouldBlockRequest('https://api.branch.io/v1/open'));
+		it('should return true with v1/open as url endpoint and no request data provided', function() {
+			assert.strictEqual(true, utils.userPreferences.shouldBlockRequest('https://api2.branch.io/v1/open'));
 		});
 		it('should return false with v1/open as url endpoint and valid request data provided', function() {
-			assert.strictEqual(false, utils.userPreferences.shouldBlockRequest('https://api.branch.io/v1/open', { link_identifier: '111111111111' }));
+			assert.strictEqual(false, utils.userPreferences.shouldBlockRequest('https://api2.branch.io/v1/open', { link_identifier: '111111111111' }));
 		});
-		it.skip('should return true with v1/xyz as url endpoint and with bogus request data', function() {
-			assert.strictEqual(true, utils.userPreferences.shouldBlockRequest('https://api.branch.io/v1/xyz', { link_identifier: '111111111111' }));
+		it('should return true with v1/xyz as url endpoint and with bogus request data', function() {
+			assert.strictEqual(true, utils.userPreferences.shouldBlockRequest('https://api2.branch.io/v1/xyz', { link_identifier: '111111111111' }));
 		});
 		it('should allow raw links', function() {
 			assert.strictEqual(false, utils.userPreferences.shouldBlockRequest('https://bnctestbed.app.link/abcdefg'));
-		});
-		it('should allow SMS posts', function() {
-			assert.strictEqual(false, utils.userPreferences.shouldBlockRequest('https://bnc.lt/c/hello'));
 		});
 	});
 
@@ -1170,8 +1175,157 @@ describe('utils', function() {
 		});
 	});
 
+	describe('addPropertyIfNotNullorEmpty', function() {
+		it('should not add property if value is empty', function() {
+			var obj = { "prop1": "value1" };
+			var expectedObj = {
+				"prop1": "value1"
+			};
+			assert.deepEqual(utils.addPropertyIfNotNullorEmpty(obj, "prop2", ""), expectedObj, 'Correctly added property to object');
+		});
+		it('should not add property if value is null', function() {
+			var obj = { "prop1": "value1" };
+			var expectedObj = {
+				"prop1": "value1"
+			};
+			assert.deepEqual(utils.addPropertyIfNotNullorEmpty(obj, "prop2", null), expectedObj, 'Correctly added property to object');
+		});
+		it('should add property if value is not empty', function() {
+			var obj = { "prop1": "value1" };
+			var expectedObj = {
+				"prop1": "value1",
+				"prop2": "value2"
+			};
+			assert.deepEqual(utils.addPropertyIfNotNullorEmpty(obj, "prop2", "value2"), expectedObj, 'Correctly added property to object');
+		});
+	});
+
+	describe('removeTrailingDotZeros', function() {
+		it('should return empty if value is empty', function() {
+			var versionNumber = "";
+			assert.deepEqual(utils.removeTrailingDotZeros(versionNumber), versionNumber, 'Correctly matched empty');
+		});
+		it('should return null if value is null', function() {
+			var versionNumber = null;
+			assert.deepEqual(utils.removeTrailingDotZeros(versionNumber), versionNumber, 'Correctly matched null');
+		});
+		it('no dot- should not strip trailing dot zero', function() {
+			var versionNumber = "10";
+			assert.deepEqual(utils.removeTrailingDotZeros(versionNumber), versionNumber, 'Correctly strip trailing zeros');
+		});
+		it('with dot and no zeros- should not strip trailing dot zero', function() {
+			var versionNumber = "10.10";
+			assert.deepEqual(utils.removeTrailingDotZeros(versionNumber), versionNumber, 'Correctly strip trailing zeros');
+		});
+		it('single dot- should not strip trailing dot zero', function() {
+			var versionNumber = "10.0";
+			assert.deepEqual(utils.removeTrailingDotZeros(versionNumber), versionNumber, 'Correctly strip trailing zeros');
+		});
+		it('multi-dot : should return string with trailing dot zeros stripped', function() {
+			var versionNumber = "10.0.0";
+			var expected = "10";
+			assert.deepEqual(utils.removeTrailingDotZeros(versionNumber), expected, 'Correctly strip trailing zeros');
+		});
+		it('should not strip trailing dot zero', function() {
+			var versionNumber = "10.0.1";
+			assert.deepEqual(utils.removeTrailingDotZeros(versionNumber), versionNumber, 'Correctly strip trailing zeros');
+		});
+	});
+	describe('getPlatformByUserAgent', function() {
+		var originalUa = navigator.userAgent;
+		var originalScreenHeight = screen.height;
+		var originalScreenWidth = screen.width;
+		var userAgentsList = {
+			android_chrome: {
+				ua: 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.6045.163 Mobile Safari/537.36',
+				platform: 'android'
+			},
+			iOS_safari: {
+				ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1',
+				platform: 'ios'
+			},
+			iOS_chrome: {
+				ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/119.0.6045.169 Mobile/15E148 Safari/604.1',
+				platform: 'ios'
+			},
+			iOS_ipad_safari: {
+				ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0 Safari/605.1.15',
+				platform: 'ipad'
+			},
+			macOS_safari: {
+				ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+				platform: 'desktop'
+			},
+			macOS_chrome: {
+				ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+				platform: 'desktop'
+			},
+			windows_edge: {
+				ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.2151.93',
+				platform: 'desktop'
+			},
+			windows_chrome: {
+				ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+				platform: 'desktop'
+			},
+			linux_chrome: {
+				ua: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+				platform: 'desktop'
+			}
+
+		};
+
+		function setUserAgent(ua) {
+			Object.defineProperty(window.navigator, 'userAgent', { value: ua });
+		}
+
+		afterEach(function() {
+			setUserAgent(originalUa);
+			Object.defineProperty(window.screen, 'width', { writable: true, configurable: true, value: originalScreenWidth });
+			Object.defineProperty(window.screen, 'height', { writable: true, configurable: true, value: originalScreenHeight });
+		});
+		it('should return "android" for Android chrome user agent', function() {
+			setUserAgent(userAgentsList.android_chrome.ua);
+			assert.equal(utils.getPlatformByUserAgent(), userAgentsList.android_chrome.platform);
+		});
+		it('should return "ios" for ios safari user agent', function() {
+			setUserAgent(userAgentsList.iOS_safari.ua);
+			assert.equal(utils.getPlatformByUserAgent(), userAgentsList.iOS_safari.platform);
+		});
+		it('should return "ios" for ios chrome user agent', function() {
+			setUserAgent(userAgentsList.iOS_chrome.ua);
+			assert.equal(utils.getPlatformByUserAgent(), userAgentsList.iOS_chrome.platform);
+		});
+		it('should return "ipad" for iOS ipad safari user agent', function() {
+			setUserAgent(userAgentsList.iOS_ipad_safari.ua);
+			Object.defineProperty(window.screen, 'width', { writable: true, configurable: true, value: 1024 });
+			Object.defineProperty(window.screen, 'height', { writable: true, configurable: true, value: 1366 });
+			assert.equal(utils.getPlatformByUserAgent(), userAgentsList.iOS_ipad_safari.platform);
+		});
+		it('should return "desktop" for macOS safari user agent', function() {
+			setUserAgent(userAgentsList.macOS_safari.ua);
+			assert.equal(utils.getPlatformByUserAgent(), userAgentsList.macOS_safari.platform);
+		});
+		it('should return "desktop" for macOS chrome user agent', function() {
+			setUserAgent(userAgentsList.macOS_chrome.ua);
+			assert.equal(utils.getPlatformByUserAgent(), userAgentsList.macOS_chrome.platform);
+		});
+		it('should return "desktop" for windows edge user agent', function() {
+			setUserAgent(userAgentsList.windows_edge.ua);
+			assert.equal(utils.getPlatformByUserAgent(), userAgentsList.windows_edge.platform);
+		});
+		it('should return "desktop" for windows chrome user agent', function() {
+			setUserAgent(userAgentsList.windows_chrome.ua);
+			assert.equal(utils.getPlatformByUserAgent(), userAgentsList.windows_chrome.platform);
+		});
+		it('should return "desktop" for linux chrome user agent', function() {
+			setUserAgent(userAgentsList.linux_chrome.ua);
+			assert.equal(utils.getPlatformByUserAgent(), userAgentsList.linux_chrome.platform);
+		});
+	});
+
 	describe('validateAdvertiserIDs function', function() {
-		let obj;
+		var obj = {};
 		beforeEach(function() {
 			obj = {
 				"SAMSUNG_IFA": "",
