@@ -16,7 +16,7 @@ env:
 jobs:
   test-build:
     name: Test-build
-    runs-on: [ self-hosted, standard ]
+    runs-on: arc-standard-small-set
     steps:
       - name: Checkout ${{ github.ref_name }}
         uses: actions/checkout@v3
