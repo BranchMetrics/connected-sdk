@@ -82,8 +82,8 @@ function validator(required, type) {
 
 function defaults(obj) {
 	var def = {
-		"browser_fingerprint_id": validator(true, validationTypes.STRING),
-		"identity_id": validator(true, validationTypes.STRING),
+		"randomized_device_token": validator(true, validationTypes.STRING),
+		"randomized_bundle_token": validator(true, validationTypes.STRING),
 		"sdk": validator(true, validationTypes.STRING),
 		"sdk_version": validator(true, validationTypes.STRING),
 		"session_id": validator(true, validationTypes.STRING)
@@ -103,9 +103,9 @@ resources.open = {
 	endpoint: "/v1/open",
 	method: utils.httpMethod.POST,
 	params: {
-		"browser_fingerprint_id": validator(false, validationTypes.STRING),
+		"randomized_device_token": validator(false, validationTypes.STRING),
 		"alternative_browser_fingerprint_id": validator(false, validationTypes.STRING),
-		"identity_id": validator(false, validationTypes.STRING),
+		"randomized_bundle_token": validator(false, validationTypes.STRING),
 		"identity": validator(false, validationTypes.STRING),
 		"link_identifier": validator(false, validationTypes.STRING),
 		"sdk": validator(false, validationTypes.STRING),
@@ -157,7 +157,7 @@ resources.link = {
 		"channel": validator(false, validationTypes.STRING),
 		"data": validator(false, validationTypes.STRING),
 		"feature": validator(false, validationTypes.STRING),
-		"identity_id": validator(true, validationTypes.STRING),
+		"randomized_bundle_token": validator(true, validationTypes.STRING),
 		"stage": validator(false, validationTypes.STRING),
 		"tags": validator(false, validationTypes.ARRAY),
 		"type": validator(false, validationTypes.NUMBER),
@@ -178,7 +178,7 @@ resources.qrCode = {
 		"data": validator(false, validationTypes.STRING),
 		"qr_code_settings": validator(false, validationTypes.STRING),
 		"feature": validator(false, validationTypes.STRING),
-		"identity_id": validator(true, validationTypes.STRING),
+		"randomized_bundle_token": validator(true, validationTypes.STRING),
 		"stage": validator(false, validationTypes.STRING),
 		"tags": validator(false, validationTypes.ARRAY),
 		"type": validator(false, validationTypes.NUMBER),

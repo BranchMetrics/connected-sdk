@@ -3,7 +3,7 @@
 goog.require('config');
 goog.require('goog.json'); // jshint unused:false
 
-/*globals branch_sample_key, session_id, identity_id, browser_fingerprint_id, branch */
+/*globals branch_sample_key, session_id, randomized_bundle_token, browser_fingerprint_id, branch */
 /*globals device_fingerprint_id */
 
 describe('Integration tests', function() {
@@ -56,8 +56,8 @@ describe('Integration tests', function() {
 		testUtils.go('');
 		branch.branch_key = 'branch_sample_key';
 		branch.identity = 'foo';
-		branch.identity_id = identity_id.toString();
-		branch.device_fingerprint_id = identity_id.toString();
+		branch.randomized_bundle_token = randomized_bundle_token.toString();
+		branch.device_fingerprint_id = randomized_bundle_token.toString();
 	});
 
 	afterEach(function() {
@@ -128,7 +128,7 @@ describe('Integration tests', function() {
 		requests[1].respond(
 			200,
 			{ "Content-Type": "application/json" },
-			'{ "identity_id":' + identity_id +
+			'{ "randomized_bundle_token":' + randomized_bundle_token +
 				', "session_id":"123088518049178533", "device_fingerprint_id":null, ' +
 				'"browser_fingerprint_id":"79336952217731267", ' +
 				'"link":"https://bnc.lt/i/4LYQTXE0_k", "identity":"Branch","has_app":true }'
@@ -154,7 +154,7 @@ describe('Integration tests', function() {
 			var expectedObj = {
 				app_id: browser_fingerprint_id,
 				browser_fingerprint_id: browser_fingerprint_id,
-				identity_id: identity_id,
+				randomized_bundle_token: randomized_bundle_token,
 				options: "%7B%7D",
 				sdk: 'connected' + config.version
 			};
@@ -245,7 +245,7 @@ describe('Integration tests', function() {
 			branch.setIdentity('identity', function(err, data) {
 				assert.deepEqual(data,
 					{
-						"identity_id": identity_id,
+						"randomized_bundle_token": randomized_bundle_token,
 						"link_click_id": "114750153298026746",
 						"link": config.link_service_endpoint + "/i/4LYQTXE0_k",
 						"referring_data_parsed": null
@@ -261,7 +261,7 @@ describe('Integration tests', function() {
 			requests[indexOfLastInitRequest(2)].respond(
 				200,
 				{ "Content-Type": "application/json" },
-				'{ "identity_id":' + identity_id +
+				'{ "randomized_bundle_token":' + randomized_bundle_token +
 					', "link_click_id":"114750153298026746"' +
 					', "link":"https://bnc.lt/i/4LYQTXE0_k" }'
 			);

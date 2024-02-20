@@ -100,8 +100,8 @@ var webStorage = function(perm) {
 			return utils.decodeBFPs(allKeyValues);
 		},
 		get: function(key, perm_override) {
-			// Make sure that browser_fingerprint_id gets decoded every time it is accessed.
-			if (key === 'browser_fingerprint_id' || key === "alternative_browser_fingerprint_id") {
+			// Make sure that randomized_device_token gets decoded every time it is accessed.
+			if (key === 'randomized_device_token' || key === "alternative_browser_fingerprint_id") {
 				return perm_override && localStorage ?
 					utils.base64Decode(localStorage.getItem(prefix(key))) :
 					utils.base64Decode(storageMethod.getItem(prefix(key)));

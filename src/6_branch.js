@@ -165,10 +165,10 @@ Branch.prototype._api = function(resource, obj, callback) {
 			this.session_id) {
 		obj['session_id'] = this.session_id;
 	}
-	if (((resource.params && resource.params['identity_id']) ||
-			(resource.queryPart && resource.queryPart['identity_id'])) &&
-			this.identity_id) {
-		obj['identity_id'] = this.identity_id;
+	if (((resource.params && resource.params['randomized_bundle_token']) ||
+			(resource.queryPart && resource.queryPart['randomized_bundle_token'])) &&
+			this.randomized_bundle_token) {
+		obj['randomized_bundle_token'] = this.randomized_bundle_token;
 	}
 
 	if (resource.endpoint.indexOf("/v1/") < 0) {
@@ -197,10 +197,10 @@ Branch.prototype._api = function(resource, obj, callback) {
 		obj['sdk_version'] = this.sdk_version;
 	}
 
-	if (((resource.params && resource.params['browser_fingerprint_id']) ||
-			(resource.queryPart && resource.queryPart['browser_fingerprint_id'])) &&
-			this.browser_fingerprint_id) {
-		obj['browser_fingerprint_id'] = this.browser_fingerprint_id;
+	if (((resource.params && resource.params['randomized_device_token']) ||
+			(resource.queryPart && resource.queryPart['randomized_device_token'])) &&
+			this.randomized_device_token) {
+		obj['randomized_device_token'] = this.randomized_device_token;
 	}
 	// Adds tracking_disabled to every post request when enabled
 	if (utils.userPreferences.trackingDisabled) {
@@ -343,10 +343,10 @@ Branch.prototype['init'] = wrap(
 
 		self.advertising_ids = options && options['advertising_ids'] && utils.validateParameterType(options['advertising_ids'], "object") && utils.validateAdvertiserIDs(options['advertising_ids']) ? options['advertising_ids'] : null;
 
-		// initialize identity_id from storage
+		// initialize randomized_bundle_token from storage
 		// note the previous line scrubs this if tracking disabled.
 		var localData = session.get(self._storage, true);
-		self.identity_id = localData && localData['identity_id'];
+		self.randomized_bundle_token = localData && localData['randomized_bundle_token'];
 
 		var setBranchValues = function(data) {
 			if (data['link_click_id']) {
@@ -358,8 +358,8 @@ Branch.prototype['init'] = wrap(
 			if (data['session_id']) {
 				self.session_id = data['session_id'].toString();
 			}
-			if (data['identity_id']) {
-				self.identity_id = data['identity_id'].toString();
+			if (data['randomized_bundle_token']) {
+				self.randomized_bundle_token = data['randomized_bundle_token'].toString();
 			}
 			if (data['identity']) {
 				self.identity = data['identity'].toString();
@@ -374,7 +374,7 @@ Branch.prototype['init'] = wrap(
 				data['click_id'] = utils.getClickIdAndSearchStringFromLink(data['referring_link']);
 			}
 
-			self.browser_fingerprint_id = data['browser_fingerprint_id'];
+			self.randomized_device_token = data['randomized_device_token'];
 
 			return data;
 		};
@@ -385,25 +385,25 @@ Branch.prototype['init'] = wrap(
 			options['branch_match_id'] :
 			null;
 		var link_identifier = (branchMatchIdFromOptions || utils.getParamValue('_branch_match_id') || utils.hashValue('r'));
-		var freshInstall = !self.identity_id; // initialized from local storage above
+		var freshInstall = !self.randomized_bundle_token; // initialized from local storage above
 		self._branchViewEnabled = !!self._storage.get('branch_view_enabled');
 		var fetchLatestBrowserFingerPrintID = function(cb) {
 			var params_r = { "sdk": config.version, "branch_key": self.branch_key };
 			var currentSessionData = session.get(self._storage) || {};
 			var permData = session.get(self._storage, true) || {};
-			if (permData['browser_fingerprint_id']) {
-				params_r['_t'] = permData['browser_fingerprint_id'];
+			if (permData['randomized_device_token']) {
+				params_r['_t'] = permData['randomized_device_token'];
 			}
 			self._api(
 				resources._r,
 				params_r,
-				function(err, browser_fingerprint_id) {
+				function(err, randomized_device_token) {
 					if (err) {
 						self.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND;
 						self.init_state_fail_details = err.message;
 					}
-					if (browser_fingerprint_id) {
-						currentSessionData['browser_fingerprint_id'] = browser_fingerprint_id;
+					if (randomized_device_token) {
+						currentSessionData['randomized_device_token'] = randomized_device_token;
 						if (cb) {
 							cb(null, currentSessionData);
 						}
@@ -508,8 +508,8 @@ Branch.prototype['init'] = wrap(
 		var params_r = { "sdk": config.version, "branch_key": self.branch_key };
 		var permData = session.get(self._storage, true) || {};
 
-		if (permData['browser_fingerprint_id']) {
-			params_r['_t'] = permData['browser_fingerprint_id'];
+		if (permData['randomized_device_token']) {
+			params_r['_t'] = permData['randomized_device_token'];
 		}
 
 		if (permData['identity']) {
@@ -521,7 +521,7 @@ Branch.prototype['init'] = wrap(
 		self._api(
 			resources._r,
 			params_r,
-			function(err, browser_fingerprint_id) {
+			function(err, randomized_device_token) {
 				if (err) {
 					self.init_state_fail_code = init_state_fail_codes.BFP_NOT_FOUND;
 					self.init_state_fail_details = err.message;
@@ -532,7 +532,7 @@ Branch.prototype['init'] = wrap(
 						resources.open,
 						{
 							"link_identifier": link_identifier,
-							"browser_fingerprint_id": link_identifier || browser_fingerprint_id,
+							"randomized_device_token": link_identifier || randomized_device_token,
 							"identity": permData['identity'] ? permData['identity'] : null,
 							"alternative_browser_fingerprint_id": permData['browser_fingerprint_id'],
 							"options": options,
@@ -683,7 +683,7 @@ Branch.prototype['setIdentity'] = wrap(callback_params.CALLBACK_ERR_DATA, functi
 	var self = this;
 	if (identity) {
 		var data = {
-			identity_id: self.identity_id,
+			randomized_bundle_token: self.randomized_bundle_token,
 			session_id: self.session_id,
 			link: self.sessionLink,
 			developer_identity: identity
@@ -738,7 +738,7 @@ Branch.prototype['logout'] = wrap(callback_params.CALLBACK_ERR, function(done) {
 
 Branch.prototype['getBrowserFingerprintId'] = wrap(callback_params.CALLBACK_ERR_DATA, function(done) {
 	var permData = session.get(this._storage, true) || {};
-	done(null, permData['browser_fingerprint_id'] || null);
+	done(null, permData['randomized_device_token'] || null);
 });
 
 /**

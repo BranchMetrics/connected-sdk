@@ -132,9 +132,9 @@ utils.cleanApplicationAndSessionStorage = function(branch) {
 		branch.device_fingerprint_id = null;
 		branch.sessionLink = null;
 		branch.session_id = null;
-		branch.identity_id = null;
+		branch.randomized_bundle_token = null;
 		branch.identity = null;
-		branch.browser_fingerprint_id = null;
+		branch.randomized_device_token = null;
 		branch._storage.remove('branch_view_enabled');
 		var data = {};
 		// Sets an empty object for branch_session and branch_session_first in local/sessionStorage
@@ -647,9 +647,9 @@ utils.isBase64Encoded = function(str) {
  * @param {Object} data
  */
 utils.encodeBFPs = function(data) {
-	if (data && data["browser_fingerprint_id"] &&
-		!utils.isBase64Encoded(data["browser_fingerprint_id"])) {
-		data["browser_fingerprint_id"] = btoa(data["browser_fingerprint_id"]);
+	if (data && data["randomized_device_token"] &&
+		!utils.isBase64Encoded(data["randomized_device_token"])) {
+		data["randomized_device_token"] = btoa(data["randomized_device_token"]);
 	}
 	if (data && data["alternative_browser_fingerprint_id"] &&
 		!utils.isBase64Encoded(data["alternative_browser_fingerprint_id"])) {
@@ -664,8 +664,8 @@ utils.encodeBFPs = function(data) {
  * @param {Object} data
  */
 utils.decodeBFPs = function(data) {
-	if (data && utils.isBase64Encoded(data["browser_fingerprint_id"])) {
-		data["browser_fingerprint_id"] = atob(data["browser_fingerprint_id"]);
+	if (data && utils.isBase64Encoded(data["randomized_device_token"])) {
+		data["randomized_device_token"] = atob(data["randomized_device_token"]);
 	}
 	if (data && utils.isBase64Encoded(data["alternative_browser_fingerprint_id"])) {
 		data["alternative_browser_fingerprint_id"] = atob(data["alternative_browser_fingerprint_id"]);
@@ -1013,7 +1013,7 @@ utils.getUserData = function(branch) {
 	user_data = utils.addPropertyIfNotNull(user_data, "screen_width", utils.getScreenWidth());
 	user_data = utils.addPropertyIfNotNull(user_data, "screen_height", utils.getScreenHeight());
 	user_data = utils.addPropertyIfNotNull(user_data, "http_referrer", document.referrer);
-	user_data = utils.addPropertyIfNotNull(user_data, "browser_fingerprint_id", branch.browser_fingerprint_id);
+	user_data = utils.addPropertyIfNotNull(user_data, "randomized_device_token", branch.randomized_device_token);
 	user_data = utils.addPropertyIfNotNull(user_data, "developer_identity", branch.identity);
 	user_data = utils.addPropertyIfNotNull(user_data, "identity", branch.identity);
 	user_data = utils.addPropertyIfNotNull(user_data, "sdk", "web");

@@ -16,11 +16,11 @@
 	"predef": [
 		"ActiveXObject",
 		"app_id",
-		"browser_fingerprint_id",
+		"randomized_device_token",
 		"console",
 		"define",
 		"goog",
-		"identity_id",
+		"randomized_bundle_token",
 		"module",
 		"session_id",
 		"sinon",
