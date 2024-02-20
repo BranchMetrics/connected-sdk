@@ -45,7 +45,8 @@
 		'crossPlatformIds',
 		'lastAttributedTouchData',
 		'setAPIResponseCallback',
-		'qrCode'
+		'qrCode',
+		'setRequestMetaData'
 	],
 	0
 );

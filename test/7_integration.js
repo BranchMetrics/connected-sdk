@@ -3,7 +3,7 @@
 goog.require('config');
 goog.require('goog.json'); // jshint unused:false
 
-/*globals branch_sample_key, session_id, randomized_bundle_token, randomized_device_token, branch */
+/*globals branch_sample_key, session_id, randomized_bundle_token, browser_fingerprint_id, branch */
 /*globals device_fingerprint_id */
 
 describe('Integration tests', function() {
@@ -123,14 +123,14 @@ describe('Integration tests', function() {
 		}
 
 		// _r
-		requests[0].callback(randomized_device_token);
+		requests[0].callback(browser_fingerprint_id);
 		// v1/open
 		requests[1].respond(
 			200,
 			{ "Content-Type": "application/json" },
 			'{ "randomized_bundle_token":' + randomized_bundle_token +
 				', "session_id":"123088518049178533", "device_fingerprint_id":null, ' +
-				'"randomized_device_token":"79336952217731267", ' +
+				'"browser_fingerprint_id":"79336952217731267", ' +
 				'"link":"https://bnc.lt/i/4LYQTXE0_k", "identity":"Branch","has_app":true }'
 		);
 		// v1/event
@@ -152,8 +152,8 @@ describe('Integration tests', function() {
 			}, {});
 
 			var expectedObj = {
-				app_id: randomized_device_token,
-				randomized_device_token: randomized_device_token,
+				app_id: browser_fingerprint_id,
+				browser_fingerprint_id: browser_fingerprint_id,
 				randomized_bundle_token: randomized_bundle_token,
 				options: "%7B%7D",
 				sdk: 'connected' + config.version
@@ -195,20 +195,20 @@ describe('Integration tests', function() {
 
 		it('should return error to callback', function(done) {
 			var assert = testUtils.plan(1, done);
-			branch.init(randomized_device_token, function(err) {
+			branch.init(browser_fingerprint_id, function(err) {
 				assert.strictEqual(err.message, 'Error in API: 400', 'Expect 400 error message');
 			});
-			requests[0].callback(randomized_device_token);
+			requests[0].callback(browser_fingerprint_id);
 			requests[1].respond(400);
 		});
 
 		it('should attempt 5xx error three times total', function(done) {
 			var assert = testUtils.plan(1, done);
-			branch.init(randomized_device_token, function(err) {
+			branch.init(browser_fingerprint_id, function(err) {
 				assert.strictEqual(err.message, 'Error in API: 500', 'Expect 500 error message');
 			});
 			var requestCount = 0;
-			requests[requestCount].callback(randomized_device_token);
+			requests[requestCount].callback(browser_fingerprint_id);
 			requestCount++;
 			requests[requestCount].respond(500);
 			clock.tick(250);
@@ -290,41 +290,6 @@ describe('Integration tests', function() {
 		});
 	});
 
-	describe('logout', function() {
-		it('should make two requests and logout session', function(done) {
-			var assert = testUtils.plan(numberOfAsserts(5), done);
-			branchInit(assert);
-			branch.logout(function(err, data) {
-				assert.strictEqual(err, null, 'Expect no err');
-				assert.strictEqual(branch.session_id, newSessionId, 'branch session was replaced');
-				assert.strictEqual(
-					branch.randomized_bundle_token,
-					newIdentityId,
-					'branch identity was replaced'
-				);
-				assert.strictEqual(branch.sessionLink, newLink, 'link was replaced');
-			});
-			var newSessionId = 'new_session';
-			var newIdentityId = 'new_id';
-			var newLink = 'new_link';
-
-			assert.strictEqual(
-				requests.length,
-				indexOfLastInitRequest(3),
-				'Expect requests length'
-			);
-			requests[indexOfLastInitRequest(2)].respond(
-				200,
-				{ "Content-Type": "application/json" },
-				JSON.stringify({
-					"session_id": newSessionId,
-					"randomized_bundle_token": newIdentityId,
-					"link": newLink
-				})
-			);
-		});
-	});
-
 	describe('getBrowserFingerprintId', function() {
 		it('it should return browser-fingerprint-id with value 79336952217731267', function(done) {
 			var assert = testUtils.plan(numberOfAsserts(1), done);
@@ -340,47 +305,6 @@ describe('Integration tests', function() {
 			branch.getBrowserFingerprintId(function(err, data) {
 				assert.strictEqual(null, data, 'expected browser-fingerprint-id returned correctly (null)');
 			});
-		});
-	});
-
-	describe('track', function() {
-		it('should make two requests and return undefined, no metadata', function(done) {
-			var assert = testUtils.plan(numberOfAsserts(2), done);
-			branchInit(assert);
-			branch.track('track', { }, function(err, data) {
-				assert.strictEqual(data, undefined, 'Expect data to be undefined');
-			});
-			assert.strictEqual(
-				requests.length,
-				indexOfLastInitRequest(3),
-				'Expect requests length'
-			);
-			requests[indexOfLastInitRequest(2)].respond(
-				200,
-				{ "Content-Type": "application/json" },
-				'{ }'
-			);
-		});
-
-		it('should make two requests and return undefined, with metadata', function(done) {
-			var assert = testUtils.plan(numberOfAsserts(2), done);
-			var testMetadata = {
-				"test": "meta_data"
-			};
-			branchInit(assert);
-			branch.track('track', testMetadata, function(err, data) {
-				assert.strictEqual(data, undefined, 'Expect data to be undefined');
-			});
-			assert.strictEqual(
-				requests.length,
-				indexOfLastInitRequest(3),
-				'Expect requests length'
-			);
-			requests[indexOfLastInitRequest(2)].respond(
-				200,
-				{ "Content-Type": "application/json" },
-				JSON.stringify(testMetadata)
-			);
 		});
 	});
 

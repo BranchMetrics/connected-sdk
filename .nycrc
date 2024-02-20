@@ -2,8 +2,9 @@
     "reporter": [
         "text-summary",
         "html",
-        "lcovonly"
+        "lcov"
     ],
+    "all": true,
     "include": [
         "src/**"
     ],

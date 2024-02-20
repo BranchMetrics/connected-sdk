@@ -126,7 +126,7 @@ Branch = function() {
 
 	var storageMethods = [ 'session', 'cookie', 'pojo' ];
 
-	this._storage = /** @type {storage} */ (new BranchStorage(storageMethods));
+	this._storage = /** @type {storage} */ (new storage.BranchStorage(storageMethods)); // jshint ignore:line
 
 	this._server = new Server();
 
@@ -137,7 +137,8 @@ Branch = function() {
 	/** @type {Array<utils.listener>} */
 	this._listeners = [ ];
 
-	this.sdk = sdk;
+	this.sdk = sdk + config.version;
+	this.requestMetadata = {};
 
 	this.sdk_version = version;
 
@@ -205,7 +206,17 @@ Branch.prototype._api = function(resource, obj, callback) {
 	if (utils.userPreferences.trackingDisabled) {
 		obj['tracking_disabled'] = utils.userPreferences.trackingDisabled;
 	}
+	if (this.requestMetadata) {
+		for (var metadata_key in this.requestMetadata) {
+			if (this.requestMetadata.hasOwnProperty(metadata_key)) {
+				if (!obj["branch_requestMetadata"]) {
+					obj["branch_requestMetadata"] = {};
+				}
+				obj["branch_requestMetadata"][metadata_key] = this.requestMetadata[metadata_key];
+			}
+		}
 
+	}
 	return this._server.request(resource, obj, this._storage, function(err, data) {
 		callback(err, data);
 	});
@@ -220,7 +231,6 @@ Branch.prototype._referringLink = function() {
 	if (referringLink) {
 		return referringLink;
 	}
-
 	var clickId = this._storage.get('click_id');
 	if (clickId) {
 		return config.link_service_endpoint + '/c/' + clickId;
@@ -325,6 +335,7 @@ Branch.prototype['init'] = wrap(
 
 		utils.userPreferences.trackingDisabled = options && options['tracking_disabled'] && options['tracking_disabled'] === true ? true : false;
 		utils.userPreferences.allowErrorsInCallback = false;
+		utils.getClientHints();
 
 		if (utils.userPreferences.trackingDisabled) {
 			utils.cleanApplicationAndSessionStorage(self);
@@ -340,6 +351,9 @@ Branch.prototype['init'] = wrap(
 		var setBranchValues = function(data) {
 			if (data['link_click_id']) {
 				self.link_click_id = data['link_click_id'].toString();
+			}
+			if (data['session_link_click_id']) {
+				self.session_link_click_id = data['session_link_click_id'].toString();
 			}
 			if (data['session_id']) {
 				self.session_id = data['session_id'].toString();
@@ -373,7 +387,7 @@ Branch.prototype['init'] = wrap(
 		var link_identifier = (branchMatchIdFromOptions || utils.getParamValue('_branch_match_id') || utils.hashValue('r'));
 		var freshInstall = !self.randomized_bundle_token; // initialized from local storage above
 		self._branchViewEnabled = !!self._storage.get('branch_view_enabled');
-		var call_r = function(cb) {
+		var fetchLatestBrowserFingerPrintID = function(cb) {
 			var params_r = { "sdk": config.version, "branch_key": self.branch_key };
 			var currentSessionData = session.get(self._storage) || {};
 			var permData = session.get(self._storage, true) || {};
@@ -398,36 +412,6 @@ Branch.prototype['init'] = wrap(
 			);
 		};
 
-		var call_open = function(err, data) {
-			var open_delay = parseInt(utils.getParamValue('[?&]_open_delay_ms'), 10);
-			utils.delay(function() {
-				self._api(
-					resources.open,
-					{
-						"link_identifier": link_identifier,
-						"randomized_device_token": data['randomized_device_token'],
-						"options": options,
-						"advertising_ids": self.advertising_ids,
-						"initial_referrer": utils.getInitialReferrer(self._referringLink()),
-						"current_url": utils.getCurrentUrl(),
-						"screen_height": utils.getScreenHeight(),
-						"screen_width": utils.getScreenWidth()
-					},
-					function(err, data) {
-						if (err) {
-							self.init_state_fail_code = init_state_fail_codes.OPEN_FAILED;
-							self.init_state_fail_details = err.message;
-						}
-						if (!err && typeof data === 'object') {
-							if (link_identifier) {
-								data['click_id'] = link_identifier;
-							}
-						}
-						finishInit(err, data);
-					}
-				);
-			}, open_delay);
-		};
 		var restoreIdentityOnInstall = function(data) {
 			if (freshInstall) {
 				data["identity"] = self.identity;
@@ -506,7 +490,7 @@ Branch.prototype['init'] = wrap(
 					self.changeEventListenerAdded = true;
 					document.addEventListener(changeEvent, function() {
 						if (!document[hidden]) {
-							call_r(call_open);
+							fetchLatestBrowserFingerPrintID(null);
 						}
 					}, false);
 				}
@@ -517,7 +501,7 @@ Branch.prototype['init'] = wrap(
 			session.update(self._storage, { "data": "" });
 			session.update(self._storage, { "referring_link": "" });
 			attachVisibilityEvent();
-			call_r(finishInit);
+			fetchLatestBrowserFingerPrintID(finishInit);
 			return;
 		}
 
@@ -548,13 +532,17 @@ Branch.prototype['init'] = wrap(
 						resources.open,
 						{
 							"link_identifier": link_identifier,
-							"randomized_device_token": randomized_device_token,
+							"randomized_device_token": link_identifier || randomized_device_token,
+							"identity": permData['identity'] ? permData['identity'] : null,
+							"alternative_browser_fingerprint_id": permData['browser_fingerprint_id'],
 							"options": options,
 							"advertising_ids": self.advertising_ids,
 							"initial_referrer": utils.getInitialReferrer(self._referringLink()),
 							"current_url": utils.getCurrentUrl(),
 							"screen_height": utils.getScreenHeight(),
-							"screen_width": utils.getScreenWidth()
+							"screen_width": utils.getScreenWidth(),
+							"model": utils.userAgentData ? utils.userAgentData.model : null,
+							"os_version": utils.userAgentData ? utils.userAgentData.platformVersion : null
 						},
 						function(err, data) {
 							if (err) {
@@ -681,7 +669,7 @@ Branch.prototype['first'] = wrap(callback_params.CALLBACK_ERR_DATA, function(don
  * callback(
  *      "Error message",
  *      {
- *           randomized_bundle_token:             '12345', // Server-generated ID of the user identity, stored in `sessionStorage`.
+ *           identity_id:             '12345', // Server-generated ID of the user identity, stored in `sessionStorage`.
  *           link:                    'url',   // New link to use (replaces old stored link), stored in `sessionStorage`.
  *           referring_data_parsed:    { },      // Returns the initial referring data for this identity, if exists, as a parsed object.
  *           referring_identity:      '12345'  // Returns the initial referring identity for this identity, if exists.
@@ -693,32 +681,22 @@ Branch.prototype['first'] = wrap(callback_params.CALLBACK_ERR_DATA, function(don
 /*** +TOC_ITEM #setidentityidentity-callback &.setIdentity()& ^ALL ***/
 Branch.prototype['setIdentity'] = wrap(callback_params.CALLBACK_ERR_DATA, function(done, identity) {
 	var self = this;
-	this._api(
-		resources.profile,
-		{
-			"identity": identity
-		},
-		function(err, data) {
-			if (err) {
-				done(err);
-			}
+	if (identity) {
+		var data = {
+			randomized_bundle_token: self.randomized_bundle_token,
+			session_id: self.session_id,
+			link: self.sessionLink,
+			developer_identity: identity
+		};
+		self.identity = identity;
+		// store the identity
+		session.patch(self._storage, { "identity": identity }, true);
+		done(null, data);
 
-			data = data || { };
-			self.randomized_bundle_token = data['randomized_bundle_token'] ? data['randomized_bundle_token'].toString() : null;
-			self.sessionLink = data['link'];
-
-			self.identity = identity;
-			data['developer_identity'] = identity;
-
-			data['referring_data_parsed'] = data['referring_data'] ?
-				safejson.parse(data['referring_data']) :
-				null;
-
-			// /v1/profile will return a new randomized_bundle_token, but the same session_id
-			session.patch(self._storage, { "identity": identity, "randomized_bundle_token": self.randomized_bundle_token }, true);
-			done(null, data);
-		}
-	);
+	}
+	else {
+		done(new Error(utils.message(utils.messages.missingIdentity)));
+	}
 });
 
 /**
@@ -746,36 +724,16 @@ Branch.prototype['setIdentity'] = wrap(callback_params.CALLBACK_ERR_DATA, functi
 /*** +TOC_ITEM #logoutcallback &.logout()& ^ALL ***/
 Branch.prototype['logout'] = wrap(callback_params.CALLBACK_ERR, function(done) {
 	var self = this;
-	this._api(resources.logout, { }, function(err, data) {
-		if (err) {
-			done(err);
-		}
+	var data = {
+		"identity": null
+	};
 
-		data = data || { };
-		data = {
-			"data_parsed": null,
-			"data": null,
-			"referring_link": null,
-			"click_id": null,
-			"link_click_id": null,
-			"identity": null, // data.identity is usually/always null anyway, but force it here
-			"session_id": data['session_id'],
-			"randomized_bundle_token": data['randomized_bundle_token'],
-			"link": data['link'],
-			"device_fingerprint_id": self.device_fingerprint_id || null
-		};
+	self.identity = null;
+	// make sure to update both session and local. removeNull = true deletes, in particular,
+	// identity instead of inserting null in storage.
+	session.patch(self._storage, data, /* updateLocalStorage */ true, /* removeNull */ true);
 
-		// /v1/logout will return a new randomized_bundle_token and a new session_id
-		self.sessionLink = data['link'];
-		self.session_id = data['session_id'];
-		self.randomized_bundle_token = data['randomized_bundle_token'];
-		self.identity = null;
-		// make sure to update both session and local. removeNull = true deletes, in particular,
-		// identity instead of inserting null in storage.
-		session.patch(self._storage, data, /* updateLocalStorage */ true, /* removeNull */ true);
-
-		done(null);
-	});
+	done(null);
 });
 
 Branch.prototype['getBrowserFingerprintId'] = wrap(callback_params.CALLBACK_ERR_DATA, function(done) {
@@ -1237,3 +1195,26 @@ Branch.prototype['setAPIResponseCallback'] = wrap(callback_params.NO_CALLBACK, f
 	this._server.onAPIResponse = callback;
 	done();
 }, /* allowed before init */ true);
+
+/***
+ * @function Branch.setRequestMetaData
+ * @param {String} key - Request metadata key
+ * @param {String} value - Request metadata value
+ * Sets request metadata that gets passed along with all the API calls except v1/pageview
+ */
+Branch.prototype['setRequestMetaData'] = function(key, value) {
+	try {
+		if ((typeof(key) === 'undefined' || key === null || key.length === 0) || (typeof value === "undefined")) {
+			return;
+		}
+
+		if (this.requestMetadata.hasOwnProperty(key) && value === null) {
+			delete this.requestMetadata[key];
+		}
+
+		this.requestMetadata = utils.addPropertyIfNotNull(this.requestMetadata, key, value);
+	}
+	catch (e) {
+		console.error("An error occured while setting request metadata", e);
+	}
+};

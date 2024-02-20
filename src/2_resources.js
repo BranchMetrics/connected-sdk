@@ -104,7 +104,9 @@ resources.open = {
 	method: utils.httpMethod.POST,
 	params: {
 		"randomized_device_token": validator(false, validationTypes.STRING),
+		"alternative_browser_fingerprint_id": validator(false, validationTypes.STRING),
 		"randomized_bundle_token": validator(false, validationTypes.STRING),
+		"identity": validator(false, validationTypes.STRING),
 		"link_identifier": validator(false, validationTypes.STRING),
 		"sdk": validator(false, validationTypes.STRING),
 		"options": validator(false, validationTypes.OBJECT),
@@ -113,6 +115,8 @@ resources.open = {
 		"current_url": validator(false, validationTypes.STRING),
 		"screen_height": validator(false, validationTypes.NUMBER),
 		"screen_width": validator(false, validationTypes.NUMBER),
+		"model": validator(false, validationTypes.STRING),
+		"os_version": validator(false, validationTypes.STRING),
 		"sdk_version": validator(false, validationTypes.STRING),
 		"advertising_ids": validator(false, validationTypes.OBJECT)
 	}
@@ -140,26 +144,6 @@ resources.linkClick = {
 	params: {
 		"click": validator(true, validationTypes.STRING)
 	}
-};
-
-
-resources.logout = {
-	destination: config.api_endpoint,
-	endpoint: "/v1/logout",
-	method: utils.httpMethod.POST,
-	params: defaults({
-		"session_id": validator(true, validationTypes.STRING)
-	})
-};
-
-resources.profile = {
-	destination: config.api_endpoint,
-	endpoint: "/v1/profile",
-	method: utils.httpMethod.POST,
-	params: defaults({
-		"randomized_bundle_token": validator(true, validationTypes.STRING),
-		"identity": validator(true, validationTypes.STRING)
-	})
 };
 
 resources.link = {
@@ -210,6 +194,7 @@ resources.logStandardEvent = {
 	method: utils.httpMethod.POST,
 	params: v2defaults({
 		"name": validator(true, validationTypes.STRING),
+		"user_data": validator(true, validationTypes.STRING),
 		"custom_data": validator(false, validationTypes.STRING),
 		"event_data": validator(false, validationTypes.STRING),
 		"content_items": validator(false, validationTypes.STRING),
@@ -223,6 +208,7 @@ resources.logCustomEvent = {
 	method: utils.httpMethod.POST,
 	params: v2defaults({
 		"name": validator(true, validationTypes.STRING),
+		"user_data": validator(true, validationTypes.STRING),
 		"custom_data": validator(false, validationTypes.STRING),
 		"event_data": validator(false, validationTypes.STRING),
 		"content_items": validator(false, validationTypes.STRING),
