@@ -99,15 +99,15 @@ jobs:
       - name: Sync S3 Builds
         id: s3syncbuilds
         if: steps.build.outcome == 'success'
-        run: aws s3 sync ./dist s3://branch-builds/connected-sdk/
+        run: aws s3 sync ./dist s3://branch-builds-usw2/connected-sdk/
 
       - name: Sync S3 CDN
         id: s3synccdn
         if: steps.s3syncbuilds.outcome == 'success'
         run: |
-          aws s3 cp ./dist/branch-connected.min.js s3://branch-cdn/branch-connected.min.js
-          aws s3 cp ./dist/branch-connected.js s3://branch-cdn/branch-connected.js
-          aws s3 cp ./dist/connected-example.html s3://branch-cdn/connected-example.html
+          aws s3 cp ./dist/branch-connected.min.js s3://branch-cdn-usw2/branch-connected.min.js
+          aws s3 cp ./dist/branch-connected.js s3://branch-cdn-usw2/branch-connected.js
+          aws s3 cp ./dist/connected-example.html s3://branch-cdn-usw2/connected-example.html
 
       - name: Remove npmrc
         run: rm -f ~/.npmrc
