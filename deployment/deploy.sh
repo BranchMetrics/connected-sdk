@@ -24,11 +24,11 @@ if [ "$CIRCLE_BRANCH" == 'master' ]; then
   make release
 
   echo -en "${GREEN}Pushing to S3: branch-builds/connected-sdk/ ...${NC}\n"
-  aws s3 cp --content-type="text/javascript" --content-encoding="gzip" dist/build.min.js.gz s3://branch-builds/connected-sdk/branch-$VERSION.min.js --acl public-read
-  aws s3 cp --content-type="text/javascript" --content-encoding="gzip" dist/build.min.js.gz s3://branch-builds/connected-sdk/branch-latest.min.js --acl public-read
-  aws s3 cp --content-type="text/javascript" --content-encoding="gzip" dist/build.min.js.gz s3://branch-builds/connected-sdk/branch-v2.0.0.min.js --acl public-read
-  aws s3 cp --content-type="text/javascript" dist/build.js s3://branch-builds/connected-sdk/branch.js --acl public-read
-  aws s3 cp example.html s3://branch-builds/connected-sdk/example.html --acl public-read
+  aws s3 cp --content-type="text/javascript" --content-encoding="gzip" dist/build.min.js.gz s3://branch-builds-usw2/connected-sdk/branch-$VERSION.min.js --acl public-read
+  aws s3 cp --content-type="text/javascript" --content-encoding="gzip" dist/build.min.js.gz s3://branch-builds-usw2/connected-sdk/branch-latest.min.js --acl public-read
+  aws s3 cp --content-type="text/javascript" --content-encoding="gzip" dist/build.min.js.gz s3://branch-builds-usw2/connected-sdk/branch-v2.0.0.min.js --acl public-read
+  aws s3 cp --content-type="text/javascript" dist/build.js s3://branch-builds-usw2/connected-sdk/branch.js --acl public-read
+  aws s3 cp example.html s3://branch-builds-usw2/connected-sdk/example.html --acl public-read
 
 else
     echo -en "${GREEN}No associated target to $CIRCLE_BRANCH - not Deploying${NC}\n"
