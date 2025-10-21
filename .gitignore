@@ -19,6 +19,7 @@ build/Release
 compiler
 compiler-latest.zip
 coverage
+dist/web/build.min.js.gz
 docs/1_onpage.md
 docs/3_branch.md
 lib-cov
@@ -32,3 +33,4 @@ local-testbench
 index.html
 dist
 .nyc_output
+test-results.json

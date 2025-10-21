@@ -32,6 +32,5 @@
 	"sub": true,
 	"trailing": true,
 	"undef": true,
-	"unused": true,
-	"esnext": true
+	"unused": true
 }

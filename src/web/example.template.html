@@ -114,7 +114,7 @@
 			else {
 				inputElement.parent().removeClass('has-error');
 			}
-			return inputElement.val();
+			return DOMPurify.sanitize(inputElement.val());
 		};
 		$('#init').click(function() {
 			request.html('branch.init();');
@@ -143,9 +143,9 @@
 		});
 		$('#setIdentity').click(function() {
 			var identity = getInputVal('#identityID');
-			request.html("branch.setIdentity('" + identity + "');");
+			request.text("branch.setIdentity('" + identity + "');");
 			branch.setIdentity(identity, function(err, data) {
-				response.html(err || JSON.stringify(data));
+				response.text(err || JSON.stringify(data));
 			});
 		});
 		$('#logout').click(function() {
@@ -250,5 +250,6 @@ branch.logEvent(
 			});
 		});
 	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.3/purify.min.js" integrity="sha512-3dcbndbDLLWfKWevQu8C/1qVRcxx6h+eRDSnn3/pcBZHISRJgsj3u71U/Ad6nQVHrEi05hOSr6Hnb/p0pWc94w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
