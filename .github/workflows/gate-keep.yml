@@ -88,7 +88,7 @@ jobs:
       - name: Call the Build bash script for QA
         run:  bash ${GITHUB_WORKSPACE}/deployment/build-qa.sh
       
-      - name: Invalidate cache at CDN
+      - name: Invalidate cloudfront cache at CDN
         run: |
           echo -en "Invalidating cloudfrond distribution for ConnectedSDK ...\n"
           aws configure set preview.cloudfront true
