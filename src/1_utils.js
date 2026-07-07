@@ -22,9 +22,19 @@ utils.nonce = ''; // Nonce value to allow for CSP whitelisting
 
 // Properties and function related to calculating Branch request roundtrip time
 utils.instrumentation = {};
-utils.navigationTimingAPIEnabled = typeof window !== 'undefined' && !!(window.performance && window.performance.timing && window.performance.timing.navigationStart);
+utils.navigationTimingAPIEnabled = typeof window !== 'undefined' &&
+	!!(window.performance &&
+	(typeof window.performance.now === 'function' ||
+	(window.performance.timing && window.performance.timing.navigationStart)));
 utils.timeSinceNavigationStart = function() {
 	// in milliseconds
+	// performance.now() returns the time elapsed since the time origin
+	// (navigation start), replacing the deprecated Navigation Timing Level 1
+	// API (performance.timing.navigationStart), which is kept as a fallback
+	// for older connected-device browsers.
+	if (typeof window.performance.now === 'function') {
+		return Math.round(window.performance.now()).toString();
+	}
 	return (Date.now() - window.performance.timing.navigationStart).toString();
 };
 utils.currentRequestBrttTag = "";
