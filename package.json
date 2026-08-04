@@ -37,7 +37,7 @@
 		"jsdom": "21.1.0",
 		"jsdom-global": "3.0.2",
 		"jshint": "2.8.0",
-		"mocha": "^10.2.0",
+		"mocha": "^10.8.2",
 		"nyc": "^15.1.0",
 		"precommit-hook": "1.0.7",
 		"sinon": "1.17.3"
